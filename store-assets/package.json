@@ -1,0 +1,12 @@
+{
+  "name": "spyme-store-assets",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Generates App Store and Play Store screenshots automatically.",
+  "scripts": {
+    "capture": "node capture.js"
+  },
+  "dependencies": {
+    "puppeteer": "^23.0.0"
+  }
+}

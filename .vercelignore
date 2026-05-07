@@ -1,0 +1,17 @@
+backend/
+desktop/
+mobile/
+infra/
+.deps/
+.git/
+*.db
+*.pyc
+__pycache__/
+node_modules/
+*.pt
+*.onnx
+.env*
+DRAWBACKS.md
+SHIP.md
+STORY.md
+YC_APPLICATION.md

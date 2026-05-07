@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>SPYME — Night Vision Setup</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0a0a0a; color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    height: 100vh; -webkit-app-region: drag;
+    overflow: hidden;
+  }
+  .titlebar { height: 32px; display: flex; align-items: center; padding: 0 12px; color: #555; font-size: 11px; letter-spacing: 1px; }
+  .container { padding: 8px 22px 22px; -webkit-app-region: no-drag; height: calc(100vh - 32px); overflow-y: auto; }
+
+  h1 { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+  .sub { color: #666; font-size: 12px; margin-bottom: 22px; line-height: 1.5; }
+
+  .option {
+    background: #141414;
+    border: 1px solid #1f1f1f;
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: border-color 0.15s, transform 0.15s;
+    -webkit-app-region: no-drag;
+  }
+  .option:hover { border-color: #333; }
+  .option.selected {
+    border-color: #FF3850;
+    background: linear-gradient(135deg, rgba(255,56,80,0.08), rgba(255,142,83,0.04));
+  }
+  .option.recommended {
+    border-color: #4285F4;
+    box-shadow: 0 0 0 1px #4285F4;
+  }
+  .opt-row { display: flex; align-items: flex-start; gap: 12px; }
+  .opt-icon { font-size: 24px; }
+  .opt-body { flex: 1; }
+  .opt-title {
+    font-size: 13px; font-weight: 700; margin-bottom: 3px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .opt-title .pill {
+    font-size: 8px; padding: 2px 6px; border-radius: 6px;
+    background: #4285F4; color: #fff; font-weight: 800; letter-spacing: 0.5px;
+  }
+  .opt-desc { font-size: 11px; color: #999; line-height: 1.5; }
+  .opt-cost {
+    font-size: 11px; color: #888; margin-top: 6px; font-weight: 600;
+  }
+  .opt-cost b { color: #fff; }
+
+  .check {
+    width: 18px; height: 18px;
+    border-radius: 50%; border: 2px solid #333;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .option.selected .check {
+    background: #FF3850; border-color: #FF3850;
+    color: #fff; font-weight: 900; font-size: 11px;
+  }
+  .option.selected .check::before { content: '✓'; }
+
+  .preview {
+    background: #0d0d0d; border: 1px solid #1a1a1a;
+    border-radius: 12px; padding: 12px;
+    margin-top: 14px;
+    display: none;
+  }
+  .option.selected .preview { display: block; }
+  .preview-title { font-size: 10px; color: #666; font-weight: 700; letter-spacing: 1px; margin-bottom: 6px; }
+  .preview-text { font-size: 11px; color: #aaa; line-height: 1.5; }
+
+  .cta {
+    background: linear-gradient(135deg, #FF3850, #FF8E53);
+    color: #fff; border: none; border-radius: 12px;
+    padding: 14px; width: 100%;
+    font-size: 14px; font-weight: 700;
+    cursor: pointer; margin-top: 14px;
+    box-shadow: 0 8px 22px rgba(255,56,80,0.25);
+    -webkit-app-region: no-drag;
+  }
+  .cta.secondary {
+    background: #1a1a1a; box-shadow: none;
+    margin-top: 6px;
+  }
+  .skip { text-align: center; font-size: 11px; color: #555; margin-top: 12px; cursor: pointer; }
+  .skip:hover { color: #888; }
+
+  .disclaimer {
+    margin-top: 18px; padding: 10px 12px;
+    background: rgba(168,85,247,0.05);
+    border: 1px solid rgba(168,85,247,0.2);
+    border-radius: 10px;
+    font-size: 10px; color: #aaa; line-height: 1.5;
+  }
+  .disclaimer b { color: #c084fc; }
+</style>
+</head>
+<body>
+
+<div class="titlebar">SPYME — NIGHT VISION SETUP</div>
+<div class="container">
+
+  <h1>🌙 See in the dark</h1>
+  <p class="sub">
+    Laptop webcams have no infrared sensor — they see almost nothing in a dark room.
+    Pick how you'd like SPYME to handle nighttime:
+  </p>
+
+  <!-- Option 1: Ambient -->
+  <div class="option" data-id="ambient" onclick="select('ambient')">
+    <div class="opt-row">
+      <div class="opt-icon">💡</div>
+      <div class="opt-body">
+        <div class="opt-title">I have ambient light</div>
+        <div class="opt-desc">A streetlamp, hallway light, or moonlight reaches the room.</div>
+        <div class="opt-cost">Cost: <b>Free</b> · SPYME enhances the image automatically</div>
+      </div>
+      <div class="check"></div>
+    </div>
+    <div class="preview">
+      <div class="preview-title">HOW IT WORKS</div>
+      <div class="preview-text">
+        We apply CLAHE histogram equalization + denoising to brighten dark frames in real time.
+        Adds ~15 ms per frame. Best when there's at least dim ambient light.
+      </div>
+    </div>
+  </div>
+
+  <!-- Option 2: IR LED — RECOMMENDED -->
+  <div class="option recommended" data-id="ir-led" onclick="select('ir-led')">
+    <div class="opt-row">
+      <div class="opt-icon">🔦</div>
+      <div class="opt-body">
+        <div class="opt-title">
+          Add a $8 IR LED strip
+          <span class="pill">RECOMMENDED</span>
+        </div>
+        <div class="opt-desc">
+          Plug a USB-powered 850 nm IR strip into your laptop. The light is invisible to humans
+          but laptop cameras can see it — full night vision in any room.
+        </div>
+        <div class="opt-cost">Cost: <b>$8 on Amazon</b> · ships in 2 days · works in pitch black</div>
+      </div>
+      <div class="check"></div>
+    </div>
+    <div class="preview">
+      <div class="preview-title">PRODUCT WE RECOMMEND</div>
+      <div class="preview-text">
+        <b style="color:#fff">Tonton 850nm IR LED Strip — $7.99</b><br/>
+        4 LEDs, USB-A power, 4×4m room coverage, no on/off switch (auto)
+      </div>
+      <div style="margin-top:8px; padding:8px; background:#0a0a0a; border-radius:8px; font-size:10px; color:#666;">
+        Affiliate disclosure: SPYME earns ~5% commission. Funds your hosting, not ours.
+      </div>
+    </div>
+  </div>
+
+  <!-- Option 3: USB IR camera -->
+  <div class="option" data-id="external-cam" onclick="select('external-cam')">
+    <div class="opt-row">
+      <div class="opt-icon">📷</div>
+      <div class="opt-body">
+        <div class="opt-title">Use an external IR webcam</div>
+        <div class="opt-desc">
+          You already have (or want) a USB camera with built-in IR LEDs. SPYME auto-detects it.
+        </div>
+        <div class="opt-cost">Cost: <b>$25–$40</b> · best image quality at night</div>
+      </div>
+      <div class="check"></div>
+    </div>
+    <div class="preview">
+      <div class="preview-title">RECOMMENDED MODELS</div>
+      <div class="preview-text">
+        • <b style="color:#fff">ELP USB IR Camera</b> — $30 · 720p · auto IR<br/>
+        • <b style="color:#fff">Spedal MF934</b> — $40 · 1080p · auto IR-cut<br/>
+        Plug in via USB. SPYME prefers it over the built-in webcam automatically.
+      </div>
+    </div>
+  </div>
+
+  <!-- Option 4: Daytime only -->
+  <div class="option" data-id="daytime" onclick="select('daytime')">
+    <div class="opt-row">
+      <div class="opt-icon">☀️</div>
+      <div class="opt-body">
+        <div class="opt-title">Daytime monitoring only</div>
+        <div class="opt-desc">SPYME will pause monitoring after sunset. No nighttime alerts.</div>
+        <div class="opt-cost">Cost: <b>Free</b> · zero false-positive risk at night</div>
+      </div>
+      <div class="check"></div>
+    </div>
+  </div>
+
+  <button class="cta" id="ctaPrimary" onclick="confirm()">Continue with selection</button>
+  <div class="skip" onclick="skip()">Skip for now — I'll set this up later</div>
+
+  <div class="disclaimer">
+    <b>⚠️ Honesty:</b> Laptop webcams without infrared see almost nothing in pitch black.
+    SPYME is a software brain — for true night vision you need real infrared light.
+  </div>
+</div>
+
+<script>
+  let selection = null;
+  function select(id) {
+    selection = id;
+    document.querySelectorAll('.option').forEach(o => {
+      o.classList.toggle('selected', o.dataset.id === id);
+    });
+    const cta = document.getElementById('ctaPrimary');
+    if (id === 'ir-led') cta.textContent = 'Buy IR LED on Amazon ($7.99)';
+    else if (id === 'external-cam') cta.textContent = "I'll plug in a USB IR camera";
+    else if (id === 'ambient') cta.textContent = 'Enable software enhancement';
+    else if (id === 'daytime') cta.textContent = 'Enable daytime-only mode';
+  }
+  function confirm() {
+    if (!selection) { select('ir-led'); return; }
+    if (selection === 'ir-led') {
+      window.spyme?.openExternal?.('https://www.amazon.com/dp/B07P5G7Y8K?tag=spyme-20');
+    }
+    window.spyme?.setStore?.('nightVisionMode', selection);
+    window.spyme?.completeOnboarding?.('night-vision');
+  }
+  function skip() {
+    window.spyme?.setStore?.('nightVisionMode', 'skipped');
+    window.spyme?.completeOnboarding?.('night-vision');
+  }
+</script>
+
+</body>
+</html>

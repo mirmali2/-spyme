@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>SPYME — Store Screenshots</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #1a1a1a; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; padding: 40px; }
+  .info {
+    color: #fff; max-width: 700px; margin: 0 auto 40px;
+    background: #252525; padding: 20px 24px; border-radius: 14px;
+  }
+  .info h1 { font-size: 22px; margin-bottom: 8px; }
+  .info p { font-size: 13px; color: #aaa; line-height: 1.6; margin-bottom: 6px; }
+  .info b { color: #FF8E53; }
+  .controls { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .controls button {
+    background: #FF3850; color: #fff; border: none; padding: 8px 14px;
+    border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer;
+  }
+  .controls button.alt { background: #444; }
+
+  /* iPhone 6.7": 1290 x 2796 */
+  /* Pixel 7 Pro: 1440 x 3120 (Play Store accepts) */
+  /* We render at full pixel size — when you screenshot the rendered iframe at 100% zoom the file is ready for upload. */
+  .shot {
+    width: 1290px; height: 2796px;
+    background: linear-gradient(180deg, #FF3850 0%, #1a1a1a 70%);
+    margin: 0 auto 60px;
+    position: relative;
+    overflow: hidden;
+    color: white;
+    page-break-after: always;
+  }
+  .shot.green { background: linear-gradient(180deg, #22c55e 0%, #1a1a1a 70%); }
+  .shot.purple { background: linear-gradient(180deg, #a855f7 0%, #1a1a1a 70%); }
+  .shot.amber { background: linear-gradient(180deg, #f59e0b 0%, #1a1a1a 70%); }
+  .shot.blue { background: linear-gradient(180deg, #3b82f6 0%, #1a1a1a 70%); }
+
+  .shot .headline {
+    position: absolute; top: 140px; left: 80px; right: 80px;
+    text-align: center;
+  }
+  .shot .h-tag {
+    font-size: 32px; font-weight: 800; letter-spacing: 4px;
+    opacity: 0.85; text-transform: uppercase; margin-bottom: 16px;
+  }
+  .shot .h-title {
+    font-size: 100px; font-weight: 900; line-height: 0.95;
+    letter-spacing: -3px; margin-bottom: 24px;
+  }
+  .shot .h-sub {
+    font-size: 32px; opacity: 0.9; line-height: 1.4;
+    max-width: 1100px; margin: 0 auto;
+  }
+
+  /* iframe device frame — 460×988 fits 28-screen preview iframe to a phone shape */
+  .device {
+    position: absolute;
+    bottom: 80px; left: 50%;
+    transform: translateX(-50%);
+    width: 540px; height: 1170px;
+    background: #1a1a1a;
+    border: 14px solid #2a2a2a;
+    border-radius: 76px;
+    box-shadow: 0 60px 120px rgba(0,0,0,0.6);
+    overflow: hidden;
+  }
+  .device iframe {
+    width: 100%; height: 100%; border: 0; background: #0a0a0a;
+    transform: translateX(-50%) scale(1);
+    transform-origin: top left;
+  }
+  /* Notch */
+  .device::before {
+    content: '';
+    position: absolute; top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 200px; height: 36px;
+    background: #000;
+    border-radius: 0 0 22px 22px;
+    z-index: 5;
+  }
+
+  /* Footer brand */
+  .shot .brand {
+    position: absolute; bottom: 30px; left: 0; right: 0;
+    text-align: center;
+    font-size: 22px;
+    opacity: 0.5;
+    letter-spacing: 4px;
+    font-weight: 800;
+  }
+
+  @media print { body { background: white; padding: 0; } .info, .controls { display: none; } .shot { margin: 0; box-shadow: none; } }
+</style>
+</head>
+<body>
+
+<div class="info">
+  <h1>📸 SPYME — App Store / Play Store Screenshots</h1>
+  <p>Each colored block below is exactly <b>1290 × 2796 px</b> — the size Apple requires for iPhone 6.7" devices and Google Play accepts for phones.</p>
+  <p>This page is the source of truth. Three ways to capture each screenshot at full resolution:</p>
+  <p>
+    <b>Option A — DevTools (free, 30 sec/shot):</b> Right-click any screenshot → Inspect → Cmd/Ctrl+Shift+P → "Capture node screenshot".<br/>
+    <b>Option B — Puppeteer (automated):</b> run <code>node store-assets/capture.js</code> from this repo (script included).<br/>
+    <b>Option C — Print to PDF:</b> Cmd/Ctrl+P → save each as image.
+  </p>
+  <div class="controls">
+    <button onclick="window.print()">Print to PDF</button>
+    <button class="alt" onclick="window.location.reload()">Refresh frames</button>
+  </div>
+  <p style="margin-top:12px;font-size:11px;color:#666">
+    Apple requires 3-10 screenshots. Play Store requires 2-8. We're giving you <b>5 hero shots</b> covering: live view, multi-camera dashboard, fire alarm, theft detection, privacy. Pick your favorites.
+  </p>
+</div>
+
+<!-- 1. LIVE VIEW -->
+<div class="shot">
+  <div class="headline">
+    <div class="h-tag">PHONE → LAPTOP</div>
+    <div class="h-title">Watch your room<br/>from anywhere</div>
+    <div class="h-sub">Live HD video, P2P, sub-second latency</div>
+  </div>
+  <div class="device">
+    <iframe src="../preview/index.html#live" scrolling="no"></iframe>
+  </div>
+  <div class="brand">SPYME</div>
+</div>
+
+<!-- 2. MULTI-CAMERA DASHBOARD -->
+<div class="shot blue">
+  <div class="headline">
+    <div class="h-tag">UP TO 4 LAPTOPS</div>
+    <div class="h-title">One account.<br/>Every room.</div>
+    <div class="h-sub">Bedroom, kitchen, office, dorm — all on your phone</div>
+  </div>
+  <div class="device">
+    <iframe src="../preview/index.html#dashboard" scrolling="no"></iframe>
+  </div>
+  <div class="brand">SPYME</div>
+</div>
+
+<!-- 3. FIRE ALARM -->
+<div class="shot amber">
+  <div class="headline">
+    <div class="h-tag">EMERGENCY</div>
+    <div class="h-title">🔥 Detect fire.<br/>Alert in 2 seconds.</div>
+    <div class="h-sub">Vibrating siren bypasses mute. SMS to your emergency contact.</div>
+  </div>
+  <div class="device">
+    <iframe src="../preview/index.html#fire" scrolling="no"></iframe>
+  </div>
+  <div class="brand">SPYME</div>
+</div>
+
+<!-- 4. THEFT DETECTION -->
+<div class="shot purple">
+  <div class="headline">
+    <div class="h-tag">AI ENGINE</div>
+    <div class="h-title">Know if your<br/>stuff goes missing</div>
+    <div class="h-sub">YOLOv8 + ByteTrack tracks every person and every object</div>
+  </div>
+  <div class="device">
+    <iframe src="../preview/index.html#ai" scrolling="no"></iframe>
+  </div>
+  <div class="brand">SPYME</div>
+</div>
+
+<!-- 5. PRIVACY -->
+<div class="shot green">
+  <div class="headline">
+    <div class="h-tag">YOUR DATA</div>
+    <div class="h-title">Zero videos<br/>on our servers.</div>
+    <div class="h-sub">P2P streaming. Clips stay on your phone or your Drive. Always.</div>
+  </div>
+  <div class="device">
+    <iframe src="../preview/index.html#privacy" scrolling="no"></iframe>
+  </div>
+  <div class="brand">SPYME</div>
+</div>
+
+</body>
+</html>
