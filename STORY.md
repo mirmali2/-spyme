@@ -2,7 +2,7 @@
 
 ## Who I am
 
-**Mustafa Khan** — CS engineer, graduating May 2026 with a Master's in
+** ALI ** — CS engineer, graduating May 2026 with a Master's in
 Computer Science from **Illinois Institute of Technology, Chicago**.
 
 ## The lived pain that started this
