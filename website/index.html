@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SPYME · Your laptop is already a security camera</title>
+<meta name="description" content="Turn the laptops you already own into AI security cameras. Multi-person tracking, theft detection, and fire alerts. Privacy-first — your videos never touch our servers.">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#0a0a0e;
+    --bg-2:#0f1014;
+    --text:#e8eaed;
+    --muted:#6b7280;
+    --red:#ff3850;
+    --orange:#ff8e53;
+    --green:#22c55e;
+    --blue:#3b82f6;
+    --purple:#a855f7;
+    --grad-warm:linear-gradient(135deg,#ff3850 0%,#ff8e53 100%);
+    --grad-cool:linear-gradient(135deg,#3b82f6 0%,#a855f7 100%);
+  }
+  body{
+    background:var(--bg);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Inter","SF Pro Display",sans-serif;
+    line-height:1.55;overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+
+  /* Animated gradient background */
+  .bg-glow{
+    position:fixed;top:0;left:0;right:0;height:100vh;z-index:-1;
+    background:
+      radial-gradient(circle at 20% 0%, rgba(255,56,80,0.15) 0%, transparent 40%),
+      radial-gradient(circle at 80% 30%, rgba(168,85,247,0.10) 0%, transparent 40%),
+      radial-gradient(circle at 50% 100%, rgba(59,130,246,0.08) 0%, transparent 40%);
+  }
+  .grid-bg{
+    position:fixed;inset:0;z-index:-1;opacity:0.035;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px);
+    background-size:60px 60px;
+    mask-image:radial-gradient(ellipse 80% 80% at 50% 30%, black 30%, transparent 80%);
+  }
+
+  /* Header */
+  header{position:sticky;top:0;z-index:100;backdrop-filter:blur(20px);background:rgba(10,10,14,0.75);border-bottom:1px solid rgba(255,255,255,0.06)}
+  .nav{display:flex;justify-content:space-between;align-items:center;padding:14px 0}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:3px;font-size:18px}
+  .logo-mark{width:30px;height:30px;border-radius:9px;background:var(--grad-warm);display:flex;align-items:center;justify-content:center;color:white;font-size:14px;font-weight:900;box-shadow:0 8px 24px rgba(255,56,80,0.3)}
+  .nav-links{display:flex;gap:28px;font-size:13px;color:var(--muted);font-weight:500}
+  .nav-links a:hover{color:var(--text)}
+  .nav-cta{background:white;color:black;padding:9px 18px;border-radius:10px;font-size:12px;font-weight:700}
+
+  /* Hero */
+  .hero{padding:80px 0 100px;text-align:center;position:relative}
+  .hero-tag{
+    display:inline-flex;align-items:center;gap:8px;padding:6px 14px;
+    background:rgba(255,56,80,0.1);border:1px solid rgba(255,56,80,0.3);
+    border-radius:30px;font-size:11px;color:var(--red);font-weight:700;
+    letter-spacing:1.5px;margin-bottom:24px;
+    animation:tagPulse 3s ease-in-out infinite;
+  }
+  @keyframes tagPulse{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(255,56,80,0.4)}50%{transform:scale(1.02);box-shadow:0 0 0 10px rgba(255,56,80,0)}}
+  .hero-tag::before{content:'●';color:var(--red);animation:dotBlink 1.5s infinite}
+  @keyframes dotBlink{0%,100%{opacity:1}50%{opacity:0.3}}
+
+  h1.hero-title{
+    font-size:78px;font-weight:900;letter-spacing:-3px;line-height:1.02;
+    margin-bottom:22px;
+  }
+  .hero-title .grad{background:var(--grad-warm);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:inline-block}
+  .hero-subtitle{font-size:18px;color:#9ca3af;max-width:580px;margin:0 auto 40px;line-height:1.6}
+  .hero-subtitle b{color:white;font-weight:700}
+
+  .cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:60px}
+  .btn{
+    padding:16px 28px;border-radius:13px;font-weight:700;font-size:14px;
+    display:inline-flex;align-items:center;gap:10px;cursor:pointer;
+    transition:all 0.2s;border:1px solid transparent;
+  }
+  .btn-primary{background:var(--grad-warm);color:white;box-shadow:0 12px 36px rgba(255,56,80,0.35)}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 44px rgba(255,56,80,0.45)}
+  .btn-ghost{background:rgba(255,255,255,0.05);color:white;border-color:rgba(255,255,255,0.1)}
+  .btn-ghost:hover{background:rgba(255,255,255,0.08)}
+
+  /* Floating screens preview */
+  .hero-visual{
+    margin-top:60px;position:relative;height:420px;
+    display:flex;justify-content:center;align-items:center;
+    perspective:1200px;
+  }
+  .float-phone{
+    width:240px;height:480px;background:#13161d;border-radius:38px;padding:8px;
+    box-shadow:0 40px 80px rgba(0,0,0,0.6),0 0 0 1px rgba(255,255,255,0.05);
+    transform-style:preserve-3d;
+    transition:transform 0.6s;
+  }
+  .float-phone-screen{
+    width:100%;height:100%;border-radius:30px;overflow:hidden;
+    position:relative;background:#0a0a0a;
+  }
+  .fp-1{position:absolute;left:50%;top:0;transform:translate(-50%,-30px) rotateY(-12deg);z-index:2}
+  .fp-2{position:absolute;left:30%;top:30px;transform:translate(-50%,0) rotateY(20deg) scale(0.85);z-index:1;opacity:0.85}
+  .fp-3{position:absolute;left:70%;top:30px;transform:translate(-50%,0) rotateY(-30deg) scale(0.85);z-index:1;opacity:0.85}
+
+  .float-phone:hover{transform:translate(-50%,-30px) rotateY(0deg) scale(1.05)}
+
+  /* sample screens content */
+  .ss-live{background:linear-gradient(135deg,#1a1a2e 0%,#000 100%);height:100%;position:relative;display:flex;align-items:center;justify-content:center;font-size:80px;opacity:0.3}
+  .ss-live::after{
+    content:'● LIVE';position:absolute;top:50px;left:14px;
+    background:var(--red);color:white;font-size:10px;font-weight:800;
+    padding:3px 8px;border-radius:4px;letter-spacing:1.5px;
+  }
+
+  .ss-fire{background:linear-gradient(180deg,#1a0000 0%,#7a0000 100%);height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:white;animation:fireBg 1s infinite}
+  @keyframes fireBg{0%,100%{background:linear-gradient(180deg,#1a0000 0%,#7a0000 100%)}50%{background:linear-gradient(180deg,#5a0000 0%,#b00000 100%)}}
+  .ss-fire .icon{font-size:80px}
+  .ss-fire .title{font-size:22px;font-weight:900;margin-top:12px}
+
+  .ss-dash{padding:30px 16px;color:white}
+  .ss-dash .h{font-size:18px;font-weight:800;letter-spacing:2px}
+  .ss-dash .row{margin-top:20px;background:#141414;border-radius:12px;padding:12px;display:flex;align-items:center;gap:8px}
+  .ss-dash .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green)}
+
+  /* Section */
+  section{padding:100px 0;position:relative}
+  .eyebrow{
+    display:inline-block;padding:5px 12px;
+    background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);
+    border-radius:20px;font-size:10px;font-weight:800;letter-spacing:2px;
+    color:var(--muted);margin-bottom:14px;
+  }
+  h2.section-title{font-size:48px;font-weight:900;letter-spacing:-2px;line-height:1.1;margin-bottom:18px}
+  .section-sub{font-size:16px;color:var(--muted);max-width:540px;margin-bottom:50px}
+
+  /* Why-now strip */
+  .strip{
+    background:linear-gradient(90deg,rgba(255,56,80,0.06) 0%,transparent 100%);
+    border:1px solid rgba(255,56,80,0.15);border-radius:20px;padding:32px;
+    display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-bottom:80px;
+  }
+  .strip-num{font-size:32px;font-weight:900;background:var(--grad-warm);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-1px}
+  .strip-label{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:1px;margin-top:4px;text-transform:uppercase}
+
+  /* Features bento */
+  .bento{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+  .bento-card{
+    background:linear-gradient(135deg,#0d0e13 0%,#13161d 100%);
+    border:1px solid rgba(255,255,255,0.06);
+    border-radius:20px;padding:28px;
+    transition:all 0.25s;position:relative;overflow:hidden;
+  }
+  .bento-card:hover{transform:translateY(-4px);border-color:rgba(255,56,80,0.4)}
+  .bento-card .icon{font-size:32px;margin-bottom:14px;display:inline-block}
+  .bento-card h3{font-size:18px;font-weight:800;margin-bottom:6px;letter-spacing:-0.5px}
+  .bento-card p{font-size:13px;color:var(--muted);line-height:1.55}
+  .b-wide{grid-column:span 4}
+  .b-tall{grid-column:span 2;grid-row:span 2}
+  .b-half{grid-column:span 2}
+  .b-third{grid-column:span 2}
+
+  /* Big focal: theft detection */
+  .demo-box{
+    margin-top:18px;background:#000;border-radius:14px;height:160px;
+    position:relative;overflow:hidden;
+    background-image:radial-gradient(circle at 30% 50%, #1a1a2e 0%, #000 50%);
+  }
+  .person-box{
+    position:absolute;border:2px solid var(--green);border-radius:3px;
+    box-shadow:0 0 14px rgba(34,197,94,0.5);
+  }
+  .person-box::before{
+    content:attr(data-label);position:absolute;top:-19px;left:-2px;
+    background:var(--green);color:black;padding:2px 6px;font-size:9px;
+    font-weight:800;border-radius:3px;white-space:nowrap;
+  }
+  .person-box.amber{border-color:var(--orange);box-shadow:0 0 14px rgba(255,142,83,0.5)}
+  .person-box.amber::before{background:var(--orange)}
+
+  /* Pricing */
+  .price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:980px;margin:0 auto}
+  .price{
+    background:linear-gradient(135deg,#0d0e13 0%,#13161d 100%);
+    border:1px solid rgba(255,255,255,0.06);
+    border-radius:24px;padding:32px;position:relative;
+    transition:all 0.25s;
+  }
+  .price:hover{transform:translateY(-4px)}
+  .price.featured{
+    border-color:rgba(255,56,80,0.6);
+    background:linear-gradient(135deg,#1a0810 0%,#13161d 100%);
+    box-shadow:0 20px 60px rgba(255,56,80,0.18);
+  }
+  .price-badge{
+    position:absolute;top:-12px;left:50%;transform:translateX(-50%);
+    background:var(--grad-warm);color:white;
+    font-size:10px;font-weight:800;letter-spacing:1px;
+    padding:4px 14px;border-radius:10px;
+  }
+  .price-name{font-size:13px;color:var(--muted);font-weight:600;margin-bottom:4px}
+  .price-amt{font-size:48px;font-weight:900;letter-spacing:-2px;line-height:1}
+  .price-amt span{font-size:13px;color:var(--muted);font-weight:500}
+  .price-meta{font-size:12px;color:var(--muted);margin-top:6px;margin-bottom:22px}
+  .price-features{list-style:none;font-size:13px;color:#cdd1d8;line-height:2}
+  .price-features li::before{content:'✓';color:var(--green);font-weight:900;margin-right:8px}
+  .price .btn{margin-top:22px;width:100%;justify-content:center}
+
+  /* Privacy section */
+  .privacy{
+    text-align:center;padding:120px 0;
+    background:radial-gradient(ellipse at center, rgba(34,197,94,0.05) 0%, transparent 60%);
+  }
+  .privacy-icon{font-size:64px;margin-bottom:18px;display:inline-block;animation:lockShake 4s infinite}
+  @keyframes lockShake{0%,90%,100%{transform:rotate(0)}92%,94%{transform:rotate(-5deg)}93%,95%{transform:rotate(5deg)}}
+  .privacy h2{font-size:46px;font-weight:900;letter-spacing:-2px;margin-bottom:16px}
+  .privacy h2 span{background:linear-gradient(135deg,var(--green),#10b981);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .privacy p{font-size:16px;color:var(--muted);max-width:580px;margin:0 auto 36px;line-height:1.7}
+  .pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:780px;margin:0 auto}
+  .pillar{background:rgba(34,197,94,0.05);border:1px solid rgba(34,197,94,0.2);border-radius:16px;padding:20px;text-align:center}
+  .pillar .icn{font-size:22px;margin-bottom:8px}
+  .pillar h4{font-size:13px;font-weight:800;margin-bottom:4px}
+  .pillar p{font-size:11px;color:var(--muted);margin:0}
+
+  /* Founder card */
+  .founder{
+    background:linear-gradient(135deg,#13161d 0%,#0d0e13 100%);
+    border:1px solid rgba(255,255,255,0.06);
+    border-radius:24px;padding:36px 32px;display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:center;
+    margin:60px auto;max-width:760px;
+  }
+  .founder-avatar{
+    width:80px;height:80px;border-radius:50%;
+    background:linear-gradient(135deg,var(--purple),var(--blue));
+    display:flex;align-items:center;justify-content:center;
+    color:white;font-weight:900;font-size:32px;
+  }
+  .founder-name{font-size:18px;font-weight:800}
+  .founder-role{font-size:11px;color:var(--muted);letter-spacing:1px;font-weight:700;margin-top:2px}
+  .founder-quote{font-size:14px;color:#cdd1d8;line-height:1.6;margin-top:10px;font-style:italic}
+
+  /* CTA banner */
+  .cta-banner{
+    background:linear-gradient(135deg,#ff3850 0%,#ff8e53 100%);
+    border-radius:24px;padding:60px 40px;text-align:center;
+    margin:80px 0;position:relative;overflow:hidden;
+  }
+  .cta-banner::before{
+    content:'';position:absolute;inset:0;
+    background:radial-gradient(circle at 80% 20%, rgba(255,255,255,0.15), transparent 40%);
+  }
+  .cta-banner h2{font-size:42px;font-weight:900;letter-spacing:-1px;margin-bottom:10px;color:white;position:relative}
+  .cta-banner p{font-size:15px;color:rgba(255,255,255,0.85);margin-bottom:28px;position:relative}
+  .cta-banner .btn{background:white;color:#a3000c;font-weight:800;position:relative}
+
+  /* Footer */
+  footer{padding:50px 0 30px;border-top:1px solid rgba(255,255,255,0.05)}
+  .foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:30px;margin-bottom:30px}
+  .foot-col h5{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:1.5px;margin-bottom:10px;text-transform:uppercase}
+  .foot-col a{display:block;font-size:13px;color:#9ca3af;padding:4px 0}
+  .foot-col a:hover{color:white}
+  .foot-bot{padding-top:20px;border-top:1px solid rgba(255,255,255,0.05);font-size:12px;color:var(--muted);display:flex;justify-content:space-between}
+
+  @media(max-width:900px){
+    h1.hero-title{font-size:48px}
+    h2.section-title{font-size:32px}
+    .bento,.price-grid,.strip,.pillars,.foot-grid{grid-template-columns:1fr}
+    .b-wide,.b-tall,.b-half,.b-third{grid-column:span 1;grid-row:auto}
+    .hero-visual{height:auto;flex-direction:column;gap:20px}
+    .fp-1,.fp-2,.fp-3{position:static;transform:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+<div class="grid-bg"></div>
+
+<header>
+  <div class="wrap nav">
+    <a href="/" class="logo">
+      <div class="logo-mark">S</div>
+      SPYME
+    </a>
+    <nav class="nav-links">
+      <a href="#how">How it works</a>
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#privacy">Privacy</a>
+      <a href="/preview/">Mobile preview</a>
+    </nav>
+    <a class="nav-cta" href="#download">Get the app</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero wrap">
+  <div class="hero-tag">LIVE · 2-day free trial · No card required</div>
+  <h1 class="hero-title">Your laptop is<br/><span class="grad">already a CCTV.</span></h1>
+  <p class="hero-subtitle">SPYME wakes up the camera, AI, and Wi-Fi already inside the laptops <b>you own</b>. Multi-person tracking, theft alerts, and fire detection—controlled from your phone. <b>Your videos never touch our servers.</b></p>
+
+  <div class="cta">
+    <a class="btn btn-primary" href="#download">↓ Get SPYME Free →</a>
+    <a class="btn btn-ghost" href="/preview/">See the app →</a>
+  </div>
+
+  <!-- Floating phones -->
+  <div class="hero-visual">
+    <div class="float-phone fp-2"><div class="float-phone-screen"><div class="ss-fire"><div class="icon">🔥</div><div class="title">FIRE</div></div></div></div>
+    <div class="float-phone fp-1"><div class="float-phone-screen"><div class="ss-live">🛏</div></div></div>
+    <div class="float-phone fp-3"><div class="float-phone-screen"><div class="ss-dash"><div class="h">SPYME</div><div class="row"><div class="dot"></div><div style="font-size:11px;font-weight:700">Bedroom · 2 people</div></div><div class="row"><div class="dot"></div><div style="font-size:11px;font-weight:700">Office · armed</div></div></div></div></div>
+  </div>
+</section>
+
+<!-- WHY NOW -->
+<section class="wrap" id="how">
+  <div class="strip">
+    <div><div class="strip-num">1.4B</div><div class="strip-label">Idle laptops worldwide</div></div>
+    <div><div class="strip-num">$0</div><div class="strip-label">Hardware to buy</div></div>
+    <div><div class="strip-num">5 min</div><div class="strip-label">Install time</div></div>
+    <div><div class="strip-num">0KB</div><div class="strip-label">Video on our servers</div></div>
+  </div>
+</section>
+
+<!-- FEATURES BENTO -->
+<section class="wrap" id="features">
+  <div class="eyebrow">FEATURES</div>
+  <h2 class="section-title">More than a camera.<br/>An <span class="grad" style="background:var(--grad-warm);-webkit-background-clip:text;-webkit-text-fill-color:transparent">AI guardian</span>.</h2>
+  <p class="section-sub">Built around the actual situations real people face—not feature checklists from a Best Buy aisle.</p>
+
+  <div class="bento">
+    <div class="bento-card b-wide">
+      <span class="icon">🧍🧍</span>
+      <h3>Multi-person tracking · with theft logic</h3>
+      <p>YOLOv8 + ByteTrack assigns persistent IDs. If a confirmed-baseline object (your phone, laptop, keys) disappears while a person was reaching nearby—you get a 4 AM SMS that names the object.</p>
+      <div class="demo-box">
+        <div class="person-box" data-label="#1 Mustafa · sitting" style="left:18%;top:25%;width:50px;height:90px"></div>
+        <div class="person-box amber" data-label="#2 ? · reaching" style="right:24%;top:20%;width:55px;height:100px"></div>
+        <div style="position:absolute;bottom:25px;left:46%;width:35px;height:25px;border:2px dashed var(--red);border-radius:3px;opacity:0.7;font-size:9px;color:var(--red);text-align:center;padding-top:6px;font-weight:800">📱?</div>
+      </div>
+    </div>
+
+    <div class="bento-card b-tall" style="background:linear-gradient(135deg,#1a0510 0%,#000 100%);border-color:rgba(255,56,80,0.3)">
+      <span class="icon" style="animation:fireBg 1s infinite">🔥</span>
+      <h3>Fire & smoke alarm</h3>
+      <p>HSV color + flicker analysis. Bypasses iPhone mute, full-screen siren, vibration loop, SMS to you AND your emergency contact.</p>
+      <div style="margin-top:16px;padding:11px;background:rgba(255,56,80,0.1);border:1px solid rgba(255,56,80,0.3);border-radius:11px;font-size:11px;color:#ffaaa6">
+        ✓ Detects in 8 frames<br/>
+        ✓ Filters lamp/sunlight<br/>
+        ✓ Smoke detection too
+      </div>
+    </div>
+
+    <div class="bento-card b-half">
+      <span class="icon">📱</span>
+      <h3>P2P live stream</h3>
+      <p>WebRTC laptop→phone. Sub-second latency. Zero servers in the path.</p>
+    </div>
+
+    <div class="bento-card b-half">
+      <span class="icon">📂</span>
+      <h3>Your data, your drive</h3>
+      <p>Clips live on your laptop, your phone, or YOUR Google Drive. We see nothing.</p>
+    </div>
+
+    <div class="bento-card b-third">
+      <span class="icon">🪟</span>
+      <h3>Cover Mode</h3>
+      <p>Laptop shows wallpaper while monitoring. Always with a visible indicator—never deceptive.</p>
+    </div>
+
+    <div class="bento-card b-third">
+      <span class="icon">⌚</span>
+      <h3>Apple Watch</h3>
+      <p>Wrist tap on alert. Tap to call 911. Tap to view live feed.</p>
+    </div>
+
+    <div class="bento-card b-third">
+      <span class="icon">📡</span>
+      <h3>Multi-laptop network</h3>
+      <p>One account, up to 4 laptops. Bedroom + kitchen + dorm + office = a full household network.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="wrap" id="pricing">
+  <div style="text-align:center">
+    <div class="eyebrow">PRICING</div>
+    <h2 class="section-title">Free for 2 days.<br/>Then your call.</h2>
+    <p class="section-sub" style="margin:0 auto 50px">No credit card to start. Cancel anytime. We use your phone's app store for billing—the only secure way.</p>
+  </div>
+
+  <div class="price-grid">
+    <div class="price">
+      <div class="price-name">Free</div>
+      <div class="price-amt">$0<span>/forever</span></div>
+      <div class="price-meta">After your 2-day Pro trial</div>
+      <ul class="price-features">
+        <li>1 laptop camera</li>
+        <li>Live view + push alerts</li>
+        <li>Person + motion detection</li>
+        <li>24-hour event history</li>
+      </ul>
+      <a class="btn btn-ghost">Start free</a>
+    </div>
+
+    <div class="price featured">
+      <div class="price-badge">★ MOST POPULAR</div>
+      <div class="price-name">Pro Monthly</div>
+      <div class="price-amt">$10<span>/month</span></div>
+      <div class="price-meta">Cancel anytime · 2-day trial</div>
+      <ul class="price-features">
+        <li>Up to 4 laptop cameras</li>
+        <li>30-day event history</li>
+        <li>Multi-person + theft AI</li>
+        <li>🔥 Fire alerts + SMS + siren</li>
+        <li>Apple Watch app</li>
+        <li>Store clips in your Drive</li>
+        <li>Priority support</li>
+      </ul>
+      <a class="btn btn-primary">Start Pro Monthly</a>
+    </div>
+
+    <div class="price">
+      <div class="price-badge" style="background:linear-gradient(135deg,var(--green),#10b981)">SAVE $20</div>
+      <div class="price-name">Pro Yearly</div>
+      <div class="price-amt">$100<span>/year</span></div>
+      <div class="price-meta">$8.33/month · price locked 12mo</div>
+      <ul class="price-features">
+        <li>Everything in Pro Monthly</li>
+        <li>2 months free</li>
+        <li>Lock in launch pricing</li>
+        <li>Founder's badge in app</li>
+      </ul>
+      <a class="btn btn-ghost">Save 17% with yearly</a>
+    </div>
+  </div>
+</section>
+
+<!-- PRIVACY -->
+<section class="privacy" id="privacy">
+  <div class="wrap">
+    <div class="privacy-icon">🔒</div>
+    <h2>Zero videos<br/>on <span>our servers.</span> Ever.</h2>
+    <p>Live streams are P2P. Recorded clips stay on your devices. We can't watch them, leak them, or sell them—because we never had them.</p>
+
+    <div class="pillars">
+      <div class="pillar"><div class="icn">🚫</div><h4>No video upload</h4><p>Your clips never leave your devices.</p></div>
+      <div class="pillar"><div class="icn">🤐</div><h4>No audio. Ever.</h4><p>Microphone access is hard-disabled.</p></div>
+      <div class="pillar"><div class="icn">🧠</div><h4>AI runs locally</h4><p>YOLOv8 inference happens on your laptop, not our cloud.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOUNDER -->
+<section class="wrap">
+  <div class="founder">
+    <div class="founder-avatar">M</div>
+    <div>
+      <div class="founder-name">Mustafa Khan</div>
+      <div class="founder-role">FOUNDER · IIT CHICAGO · CS MASTER'S '26</div>
+      <div class="founder-quote">"I built SPYME because I lived through bad roommates and a near-miss gas leak with no camera around. I couldn't afford Ring or Nest. The laptop on my desk was already a CCTV pretending to be a notebook. So I woke it up."</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="wrap">
+  <div class="cta-banner">
+    <h2>The hardware's already in your bag.</h2>
+    <p>2-day Pro trial. No card. About 5 minutes to install.</p>
+    <a class="btn">↓ Download SPYME free</a>
+  </div>
+</section>
+
+<!-- DOWNLOAD -->
+<section id="download" class="wrap" style="padding-bottom:60px">
+  <div style="text-align:center;margin-bottom:30px">
+    <div class="eyebrow">GET THE APP</div>
+    <h2 class="section-title">All your devices.<br/>One account.</h2>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;max-width:900px;margin:0 auto">
+    <a href="https://apps.apple.com" class="bento-card" style="text-align:center;padding:24px">
+      <div style="font-size:32px;margin-bottom:6px"></div>
+      <div style="font-size:9px;color:var(--muted);font-weight:700;letter-spacing:1px">DOWNLOAD ON</div>
+      <div style="font-size:14px;font-weight:800">App Store</div>
+    </a>
+    <a href="https://play.google.com" class="bento-card" style="text-align:center;padding:24px">
+      <div style="font-size:32px;margin-bottom:6px">▶</div>
+      <div style="font-size:9px;color:var(--muted);font-weight:700;letter-spacing:1px">GET IT ON</div>
+      <div style="font-size:14px;font-weight:800">Google Play</div>
+    </a>
+    <a href="/downloads/SPYME-Setup.exe" class="bento-card" style="text-align:center;padding:24px">
+      <div style="font-size:32px;margin-bottom:6px">🪟</div>
+      <div style="font-size:9px;color:var(--muted);font-weight:700;letter-spacing:1px">FREE FOR</div>
+      <div style="font-size:14px;font-weight:800">Windows</div>
+    </a>
+    <a href="/downloads/SPYME.dmg" class="bento-card" style="text-align:center;padding:24px">
+      <div style="font-size:32px;margin-bottom:6px">💻</div>
+      <div style="font-size:9px;color:var(--muted);font-weight:700;letter-spacing:1px">FREE FOR</div>
+      <div style="font-size:14px;font-weight:800">macOS</div>
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-col">
+        <div class="logo" style="margin-bottom:12px">
+          <div class="logo-mark">S</div>SPYME
+        </div>
+        <p style="font-size:12px;color:var(--muted);max-width:300px;line-height:1.6">Privacy-first AI security. Built by a CS Master's student at IIT Chicago.</p>
+      </div>
+      <div class="foot-col">
+        <h5>Product</h5>
+        <a href="#features">Features</a>
+        <a href="#pricing">Pricing</a>
+        <a href="/preview/">Mobile preview</a>
+        <a href="#download">Download</a>
+      </div>
+      <div class="foot-col">
+        <h5>Company</h5>
+        <a>About</a>
+        <a>Press</a>
+        <a>Careers</a>
+        <a href="mailto:hello@spyme.app">Contact</a>
+      </div>
+      <div class="foot-col">
+        <h5>Legal</h5>
+        <a href="/legal/PRIVACY.md">Privacy</a>
+        <a href="/legal/TERMS.md">Terms</a>
+        <a>Security</a>
+        <a>DMCA</a>
+      </div>
+    </div>
+    <div class="foot-bot">
+      <span>© 2026 SPYME · Chicago IL</span>
+      <span>Made with ❤️ at IIT Chicago</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

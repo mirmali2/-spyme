@@ -1,0 +1,39 @@
+{
+  "name": "spyme-desktop",
+  "version": "0.1.0",
+  "description": "SPYME desktop surveillance node",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "build:win": "electron-builder --win",
+    "build:mac": "electron-builder --mac"
+  },
+  "dependencies": {
+    "node-webcam": "^0.8.0",
+    "node-fetch": "^3.3.2",
+    "ws": "^8.17.0",
+    "wrtc": "^0.4.7",
+    "better-sqlite3": "^9.6.0",
+    "node-schedule": "^2.1.1",
+    "systeminformation": "^5.22.7",
+    "electron-store": "^9.0.0"
+  },
+  "devDependencies": {
+    "electron": "^30.0.0",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.spyme.desktop",
+    "productName": "SPYME",
+    "win": {
+      "target": "nsis",
+      "icon": "assets/icon.ico"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "assets/icon.icns",
+      "entitlements": "assets/entitlements.mac.plist",
+      "hardenedRuntime": true
+    }
+  }
+}

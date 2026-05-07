@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SPYME Admin · Mustafa</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    background:#08090d;color:#e8eaed;
+    font-family:-apple-system,BlinkMacSystemFont,"Inter","SF Pro Display","Segoe UI",sans-serif;
+    font-size:14px;
+    overflow-x:hidden;
+  }
+  a{color:inherit;text-decoration:none}
+  :root{
+    --bg:#08090d;
+    --panel:#0e1015;
+    --panel-2:#13161d;
+    --border:#1d2028;
+    --muted:#5a6172;
+    --text:#e8eaed;
+    --red:#ff3850;
+    --green:#22c55e;
+    --amber:#f59e0b;
+    --blue:#3b82f6;
+    --purple:#a855f7;
+  }
+
+  /* App shell */
+  .app{display:flex;min-height:100vh}
+  .sidebar{
+    width:240px;background:var(--panel);border-right:1px solid var(--border);
+    padding:20px 14px;position:sticky;top:0;height:100vh;
+    display:flex;flex-direction:column;gap:4px;
+  }
+  .brand{
+    display:flex;align-items:center;gap:10px;padding:6px 10px 18px;
+    border-bottom:1px solid var(--border);margin-bottom:14px;
+  }
+  .brand-mark{
+    width:28px;height:28px;border-radius:8px;
+    background:linear-gradient(135deg,#ff3850,#ff8e53);
+    display:flex;align-items:center;justify-content:center;
+    color:white;font-weight:900;font-size:12px;
+  }
+  .brand-name{font-size:14px;font-weight:800;letter-spacing:1px}
+  .brand-meta{font-size:9px;color:var(--muted);letter-spacing:1px;font-weight:700}
+
+  .nav-item{
+    display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:8px;
+    color:#9ba3b3;font-size:13px;font-weight:500;cursor:pointer;
+    transition:all 0.12s;
+  }
+  .nav-item:hover{background:var(--panel-2);color:var(--text)}
+  .nav-item.active{background:rgba(255,56,80,0.1);color:var(--red);font-weight:700}
+  .nav-icon{width:16px;font-size:14px;text-align:center}
+  .nav-badge{margin-left:auto;background:var(--red);color:white;font-size:9px;padding:2px 6px;border-radius:8px;font-weight:800}
+
+  .nav-section{
+    font-size:9px;color:#3a4050;letter-spacing:2px;font-weight:800;
+    margin:14px 11px 6px;text-transform:uppercase;
+  }
+
+  .footer-card{
+    margin-top:auto;background:var(--panel-2);border:1px solid var(--border);
+    border-radius:10px;padding:11px;display:flex;align-items:center;gap:9px;
+  }
+  .avatar{
+    width:30px;height:30px;border-radius:50%;
+    background:linear-gradient(135deg,#a855f7,#3b82f6);
+    display:flex;align-items:center;justify-content:center;
+    color:white;font-weight:800;font-size:12px;
+  }
+
+  /* Main */
+  main{flex:1;padding:24px 28px;max-width:1400px}
+  .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
+  .page-title{font-size:24px;font-weight:800;letter-spacing:-0.5px}
+  .page-sub{font-size:12px;color:var(--muted);margin-top:2px}
+  .topbar-actions{display:flex;gap:10px}
+  .btn{
+    padding:9px 14px;border-radius:9px;font-weight:600;font-size:12px;
+    border:1px solid var(--border);background:var(--panel);color:var(--text);
+    cursor:pointer;transition:all 0.15s;
+  }
+  .btn:hover{border-color:#2c303b}
+  .btn-primary{background:linear-gradient(135deg,#ff3850,#ff8e53);border-color:transparent;color:white}
+  .btn-ghost{background:transparent;border:none;color:var(--muted)}
+
+  .live-pill{
+    display:inline-flex;align-items:center;gap:6px;padding:4px 10px;
+    background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);
+    border-radius:10px;font-size:11px;color:var(--green);font-weight:700;
+  }
+  .live-dot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 1.5s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+
+  /* Stat cards */
+  .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+  .stat-card{
+    background:var(--panel);border:1px solid var(--border);border-radius:14px;
+    padding:18px;position:relative;overflow:hidden;
+  }
+  .stat-card::before{
+    content:'';position:absolute;top:0;left:0;width:3px;height:100%;
+    background:linear-gradient(180deg,var(--red),transparent);
+  }
+  .stat-label{font-size:10px;color:var(--muted);letter-spacing:1.5px;font-weight:700;text-transform:uppercase}
+  .stat-num{font-size:28px;font-weight:900;margin-top:4px;letter-spacing:-1px}
+  .stat-delta{font-size:11px;color:var(--green);margin-top:3px;font-weight:600}
+  .stat-delta.down{color:var(--red)}
+  .stat-trend{position:absolute;right:18px;bottom:14px;width:60px;height:30px;opacity:0.3}
+
+  /* Content rows */
+  .panels{display:grid;grid-template-columns:1.6fr 1fr;gap:14px;margin-bottom:14px}
+  .panel{
+    background:var(--panel);border:1px solid var(--border);border-radius:14px;
+    padding:18px;
+  }
+  .panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+  .panel-title{font-size:13px;font-weight:700}
+  .panel-link{font-size:11px;color:var(--blue);font-weight:600}
+
+  /* Tables */
+  .tbl{width:100%;border-collapse:collapse;font-size:12px}
+  .tbl th{
+    text-align:left;padding:6px 8px;color:var(--muted);font-weight:600;
+    font-size:9px;letter-spacing:1px;text-transform:uppercase;
+    border-bottom:1px solid var(--border);
+  }
+  .tbl td{padding:9px 8px;border-bottom:1px solid var(--border)}
+  .tbl tr:hover td{background:rgba(255,255,255,0.02)}
+  .pill{padding:2px 8px;border-radius:8px;font-size:10px;font-weight:700;letter-spacing:0.5px;display:inline-block}
+  .pill-trial{background:rgba(245,158,11,0.15);color:var(--amber)}
+  .pill-pro{background:rgba(168,85,247,0.15);color:var(--purple)}
+  .pill-yearly{background:rgba(34,197,94,0.15);color:var(--green)}
+  .pill-active{background:rgba(34,197,94,0.15);color:var(--green)}
+  .pill-fire{background:rgba(255,56,80,0.18);color:var(--red)}
+  .pill-theft{background:rgba(245,158,11,0.18);color:var(--amber)}
+  .pill-person{background:rgba(59,130,246,0.18);color:var(--blue)}
+
+  /* Live activity */
+  .activity-row{
+    display:flex;align-items:center;gap:11px;padding:10px 0;
+    border-bottom:1px solid var(--border);
+  }
+  .activity-row:last-child{border:none}
+  .ai-icon{
+    width:32px;height:32px;border-radius:9px;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;font-size:14px;
+  }
+  .ai-icon.fire{background:rgba(255,56,80,0.15);color:var(--red)}
+  .ai-icon.signup{background:rgba(34,197,94,0.15);color:var(--green)}
+  .ai-icon.payment{background:rgba(168,85,247,0.15);color:var(--purple)}
+  .ai-icon.alert{background:rgba(59,130,246,0.15);color:var(--blue)}
+  .activity-info{flex:1;min-width:0}
+  .activity-title{font-size:12px;font-weight:600}
+  .activity-meta{font-size:10px;color:var(--muted);margin-top:1px}
+  .activity-time{font-size:10px;color:var(--muted)}
+
+  /* Health monitor */
+  .health-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+  .health-tile{background:var(--panel-2);border-radius:10px;padding:12px}
+  .health-name{font-size:11px;color:var(--muted);font-weight:600}
+  .health-status{display:flex;align-items:center;gap:5px;margin-top:5px}
+  .health-num{font-size:18px;font-weight:800}
+  .health-meta{font-size:10px;color:var(--green);margin-top:2px}
+
+  /* Sparkline */
+  .spark{position:absolute;right:20px;top:50%;transform:translateY(-50%);width:80px;height:36px;opacity:0.6}
+
+  /* Section title */
+  h2.section{font-size:14px;font-weight:700;margin:8px 0 10px;letter-spacing:-0.3px}
+
+  /* Mini-action row */
+  .quick-actions{display:flex;gap:10px;margin-bottom:18px}
+  .qa{
+    flex:1;background:var(--panel);border:1px solid var(--border);
+    border-radius:12px;padding:14px;cursor:pointer;
+    transition:all 0.15s;
+  }
+  .qa:hover{border-color:var(--red);transform:translateY(-2px)}
+  .qa-icon{font-size:18px;margin-bottom:6px}
+  .qa-title{font-size:12px;font-weight:700}
+  .qa-sub{font-size:10px;color:var(--muted);margin-top:2px}
+
+  /* Revenue chart bars */
+  .chart{height:130px;display:flex;align-items:flex-end;gap:4px;padding:8px 0}
+  .chart-bar{
+    flex:1;background:linear-gradient(180deg,var(--red),#7a0010);
+    border-radius:3px;min-height:4px;position:relative;
+    transition:transform 0.2s;
+  }
+  .chart-bar:hover{transform:scaleY(1.05)}
+  .chart-bar.future{background:linear-gradient(180deg,#252830,#1a1d24);opacity:0.5}
+
+  /* Dot */
+  .dot-status{width:6px;height:6px;border-radius:50%}
+  .dot-status.green{background:var(--green);box-shadow:0 0 6px var(--green)}
+  .dot-status.amber{background:var(--amber)}
+  .dot-status.red{background:var(--red)}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">S</div>
+      <div>
+        <div class="brand-name">SPYME</div>
+        <div class="brand-meta">ADMIN · v0.1</div>
+      </div>
+    </div>
+
+    <div class="nav-item active"><span class="nav-icon">⊙</span> Overview</div>
+    <div class="nav-item"><span class="nav-icon">👥</span> Users <span class="nav-badge">1,243</span></div>
+    <div class="nav-item"><span class="nav-icon">📷</span> Devices</div>
+    <div class="nav-item"><span class="nav-icon">🚨</span> Live Alerts</div>
+    <div class="nav-item"><span class="nav-icon">💳</span> Revenue</div>
+
+    <div class="nav-section">Operations</div>
+    <div class="nav-item"><span class="nav-icon">🏥</span> System Health</div>
+    <div class="nav-item"><span class="nav-icon">💬</span> Support <span class="nav-badge">3</span></div>
+    <div class="nav-item"><span class="nav-icon">📊</span> Analytics</div>
+    <div class="nav-item"><span class="nav-icon">🔔</span> Push Console</div>
+
+    <div class="nav-section">Settings</div>
+    <div class="nav-item"><span class="nav-icon">🔑</span> API Keys</div>
+    <div class="nav-item"><span class="nav-icon">📜</span> Logs</div>
+    <div class="nav-item"><span class="nav-icon">⚙️</span> Configuration</div>
+
+    <div class="footer-card">
+      <div class="avatar">M</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;font-weight:700">Mustafa Khan</div>
+        <div style="font-size:9px;color:var(--muted)">Founder · IIT Chicago</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <main>
+    <div class="topbar">
+      <div>
+        <div class="page-title">Good evening, Mustafa 👋</div>
+        <div class="page-sub">Here's what's happening with SPYME right now</div>
+      </div>
+      <div class="topbar-actions">
+        <span class="live-pill"><span class="live-dot"></span>Live · all systems operational</span>
+        <button class="btn">📥 Export</button>
+        <button class="btn btn-primary">⚡ Send broadcast</button>
+      </div>
+    </div>
+
+    <!-- Quick actions -->
+    <div class="quick-actions">
+      <div class="qa">
+        <div class="qa-icon">💬</div>
+        <div class="qa-title">3 support tickets</div>
+        <div class="qa-sub">2 fire-related · 1 billing</div>
+      </div>
+      <div class="qa">
+        <div class="qa-icon">⚠️</div>
+        <div class="qa-title">2 failed payments</div>
+        <div class="qa-sub">Auto-retry in 24h · Dunning email sent</div>
+      </div>
+      <div class="qa">
+        <div class="qa-icon">🎯</div>
+        <div class="qa-title">42 trial expiring</div>
+        <div class="qa-sub">Sending paywall reminder push</div>
+      </div>
+      <div class="qa">
+        <div class="qa-icon">🔥</div>
+        <div class="qa-title">1 fire alert in last hour</div>
+        <div class="qa-sub">User confirmed false alarm</div>
+      </div>
+    </div>
+
+    <!-- KPI grid -->
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label">MRR</div>
+        <div class="stat-num">$1,247</div>
+        <div class="stat-delta">↑ 18% vs last week</div>
+        <svg class="stat-trend" viewBox="0 0 60 30"><polyline fill="none" stroke="#22c55e" stroke-width="1.5" points="0,25 10,22 20,18 30,15 40,10 50,8 60,4"/></svg>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Active Users</div>
+        <div class="stat-num">1,243</div>
+        <div class="stat-delta">↑ 47 today</div>
+        <svg class="stat-trend" viewBox="0 0 60 30"><polyline fill="none" stroke="#22c55e" stroke-width="1.5" points="0,28 10,25 20,22 30,20 40,18 50,12 60,6"/></svg>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Trial → Pro</div>
+        <div class="stat-num">23.4%</div>
+        <div class="stat-delta">↑ 4.1% vs last month</div>
+        <svg class="stat-trend" viewBox="0 0 60 30"><polyline fill="none" stroke="#22c55e" stroke-width="1.5" points="0,26 10,24 20,21 30,17 40,15 50,12 60,8"/></svg>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Fire alerts (30d)</div>
+        <div class="stat-num">14</div>
+        <div class="stat-delta">11 confirmed real · 3 false</div>
+        <svg class="stat-trend" viewBox="0 0 60 30"><polyline fill="none" stroke="#ff3850" stroke-width="1.5" points="0,20 10,22 20,18 30,15 40,18 50,14 60,12"/></svg>
+      </div>
+    </div>
+
+    <!-- Live activity + health -->
+    <div class="panels">
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">⚡ Live activity feed</div>
+          <span class="live-pill"><span class="live-dot"></span>real-time</span>
+        </div>
+        <div class="activity-row">
+          <div class="ai-icon fire">🔥</div>
+          <div class="activity-info">
+            <div class="activity-title">Fire alert fired — sarah@gmail.com</div>
+            <div class="activity-meta">Bedroom Mac · 92% confidence · SMS + push delivered · user marked resolved 12s later</div>
+          </div>
+          <div class="activity-time">just now</div>
+        </div>
+        <div class="activity-row">
+          <div class="ai-icon payment">💳</div>
+          <div class="activity-info">
+            <div class="activity-title">New Pro Yearly subscriber — mark.t@uchicago.edu</div>
+            <div class="activity-meta">$50 · referral from r/uchicago · trial → paid in 2.1 days</div>
+          </div>
+          <div class="activity-time">3m ago</div>
+        </div>
+        <div class="activity-row">
+          <div class="ai-icon signup">✨</div>
+          <div class="activity-info">
+            <div class="activity-title">7 new sign-ups in last 10 min</div>
+            <div class="activity-meta">5 from TikTok demo (#SPYME), 2 organic · all installed laptop app</div>
+          </div>
+          <div class="activity-time">8m ago</div>
+        </div>
+        <div class="activity-row">
+          <div class="ai-icon alert">🧍</div>
+          <div class="activity-info">
+            <div class="activity-title">Theft event — anonymous (privacy mode)</div>
+            <div class="activity-meta">User #1241 detected unknown person + cell phone disappeared · clip in their Drive</div>
+          </div>
+          <div class="activity-time">15m ago</div>
+        </div>
+        <div class="activity-row">
+          <div class="ai-icon signup">🎉</div>
+          <div class="activity-info">
+            <div class="activity-title">Milestone: 1,200 active users</div>
+            <div class="activity-meta">Reached at 11:47 AM CDT</div>
+          </div>
+          <div class="activity-time">2h ago</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">🏥 System health</div>
+          <span class="panel-link">View detailed →</span>
+        </div>
+        <div class="health-grid">
+          <div class="health-tile">
+            <div class="health-name">API · FastAPI</div>
+            <div class="health-status"><span class="dot-status green"></span><span style="font-size:10px;font-weight:700">Healthy</span></div>
+            <div class="health-num" style="margin-top:6px">12ms</div>
+            <div class="health-meta">p50 · 99.99% uptime</div>
+          </div>
+          <div class="health-tile">
+            <div class="health-name">Database · Postgres</div>
+            <div class="health-status"><span class="dot-status green"></span><span style="font-size:10px;font-weight:700">Healthy</span></div>
+            <div class="health-num" style="margin-top:6px">2.4M</div>
+            <div class="health-meta">rows · 312 MB</div>
+          </div>
+          <div class="health-tile">
+            <div class="health-name">WebRTC Signaling</div>
+            <div class="health-status"><span class="dot-status green"></span><span style="font-size:10px;font-weight:700">42 active</span></div>
+            <div class="health-num" style="margin-top:6px">42</div>
+            <div class="health-meta">live rooms</div>
+          </div>
+          <div class="health-tile">
+            <div class="health-name">FCM/APNs</div>
+            <div class="health-status"><span class="dot-status green"></span><span style="font-size:10px;font-weight:700">Healthy</span></div>
+            <div class="health-num" style="margin-top:6px">1,847</div>
+            <div class="health-meta">pushes 24h</div>
+          </div>
+          <div class="health-tile">
+            <div class="health-name">Twilio SMS</div>
+            <div class="health-status"><span class="dot-status amber"></span><span style="font-size:10px;font-weight:700">Trial</span></div>
+            <div class="health-num" style="margin-top:6px">$11.20</div>
+            <div class="health-meta">/$15 left</div>
+          </div>
+          <div class="health-tile">
+            <div class="health-name">Stripe</div>
+            <div class="health-status"><span class="dot-status green"></span><span style="font-size:10px;font-weight:700">Live mode</span></div>
+            <div class="health-num" style="margin-top:6px">$1,247</div>
+            <div class="health-meta">collected 30d</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Revenue chart + recent users -->
+    <div class="panels" style="grid-template-columns:1fr 1.4fr">
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <div class="panel-title">💵 Revenue · last 14 days</div>
+            <div style="font-size:10px;color:var(--muted);margin-top:2px">$1,247 · forecast +$340 next 7d</div>
+          </div>
+        </div>
+        <div class="chart">
+          <div class="chart-bar" style="height:25%"></div>
+          <div class="chart-bar" style="height:30%"></div>
+          <div class="chart-bar" style="height:42%"></div>
+          <div class="chart-bar" style="height:38%"></div>
+          <div class="chart-bar" style="height:55%"></div>
+          <div class="chart-bar" style="height:60%"></div>
+          <div class="chart-bar" style="height:48%"></div>
+          <div class="chart-bar" style="height:70%"></div>
+          <div class="chart-bar" style="height:80%"></div>
+          <div class="chart-bar" style="height:75%"></div>
+          <div class="chart-bar" style="height:88%"></div>
+          <div class="chart-bar" style="height:92%"></div>
+          <div class="chart-bar" style="height:100%"></div>
+          <div class="chart-bar future" style="height:65%"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--muted);font-weight:600;margin-top:6px">
+          <span>Apr 22</span><span>Apr 29</span><span>Today</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">👤 Recent users</div>
+          <span class="panel-link">View all 1,243 →</span>
+        </div>
+        <table class="tbl">
+          <thead><tr><th>User</th><th>Plan</th><th>Devices</th><th>Joined</th><th>MRR</th></tr></thead>
+          <tbody>
+            <tr><td><b>mark.t</b>@uchicago.edu</td><td><span class="pill pill-yearly">YEARLY</span></td><td>3</td><td>just now</td><td>$50</td></tr>
+            <tr><td><b>sarah</b>@gmail.com</td><td><span class="pill pill-pro">PRO</span></td><td>2</td><td>2h ago</td><td>$5</td></tr>
+            <tr><td><b>amy.l</b>@yahoo.com</td><td><span class="pill pill-trial">TRIAL</span></td><td>1</td><td>4h ago</td><td>$0</td></tr>
+            <tr><td><b>nikhil</b>@iit.edu</td><td><span class="pill pill-pro">PRO</span></td><td>4</td><td>1d ago</td><td>$5</td></tr>
+            <tr><td><b>jamal</b>@asu.edu</td><td><span class="pill pill-trial">TRIAL</span></td><td>2</td><td>1d ago</td><td>$0</td></tr>
+            <tr><td><b>priya.k</b>@gmail.com</td><td><span class="pill pill-yearly">YEARLY</span></td><td>5</td><td>2d ago</td><td>$50</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Recent fire/theft events -->
+    <div class="panel">
+      <div class="panel-head">
+        <div>
+          <div class="panel-title">🚨 Recent critical events</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:2px">Fire + theft alerts that fired across all users · last 24 hours</div>
+        </div>
+        <button class="btn">Filter ▾</button>
+      </div>
+      <table class="tbl">
+        <thead><tr><th>Time</th><th>User</th><th>Type</th><th>Camera</th><th>Confidence</th><th>Resolution</th><th></th></tr></thead>
+        <tbody>
+          <tr>
+            <td>09:41</td><td>sarah@gmail.com</td>
+            <td><span class="pill pill-fire">🔥 FIRE</span></td>
+            <td>Bedroom Mac</td><td>92%</td>
+            <td><span class="pill pill-active">User confirmed FALSE</span></td>
+            <td><a class="panel-link">Review →</a></td>
+          </tr>
+          <tr>
+            <td>03:17</td><td>jamal@asu.edu</td>
+            <td><span class="pill pill-theft">THEFT</span></td>
+            <td>Living Room PC</td><td>87%</td>
+            <td><span class="pill pill-active">Roommate confirmed</span></td>
+            <td><a class="panel-link">Review →</a></td>
+          </tr>
+          <tr>
+            <td>Yesterday</td><td>priya.k@gmail.com</td>
+            <td><span class="pill pill-fire">🔥 FIRE</span></td>
+            <td>Kitchen Old MBP</td><td>96%</td>
+            <td><span class="pill pill-fire">REAL · 911 called</span></td>
+            <td><a class="panel-link">Review →</a></td>
+          </tr>
+          <tr>
+            <td>Yesterday</td><td>nikhil@iit.edu</td>
+            <td><span class="pill pill-person">2 PERSONS</span></td>
+            <td>Dorm Laptop</td><td>94%</td>
+            <td><span class="pill pill-active">User dismissed</span></td>
+            <td><a class="panel-link">Review →</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  // Toggle navigation
+  document.querySelectorAll('.nav-item').forEach(el => {
+    el.addEventListener('click', () => {
+      document.querySelectorAll('.nav-item.active').forEach(a => a.classList.remove('active'));
+      el.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>

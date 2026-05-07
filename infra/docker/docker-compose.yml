@@ -1,0 +1,58 @@
+version: "3.9"
+
+services:
+  api:
+    build:
+      context: ../../backend
+      dockerfile: ../infra/docker/Dockerfile.api
+    env_file: ../../backend/.env
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: spyme
+      POSTGRES_USER: spyme
+      POSTGRES_PASSWORD: spyme_secret
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U spyme"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+  coturn:
+    image: coturn/coturn:latest
+    network_mode: host
+    command: >
+      -n
+      --log-file=stdout
+      --lt-cred-mech
+      --fingerprint
+      --no-multicast-peers
+      --no-cli
+      --no-tlsv1
+      --no-tlsv1_1
+      --realm=spyme.app
+      --user=spyme:turnpass
+    restart: unless-stopped
+
+volumes:
+  pgdata:

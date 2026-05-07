@@ -1,0 +1,54 @@
+# Local Python deps (huge — torch + ultralytics)
+.deps/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.venv/
+venv/
+
+# Local DB
+*.db
+*.sqlite
+*.sqlite3
+
+# Node
+node_modules/
+npm-debug.log
+.pnpm-debug.log
+.expo/
+.expo-shared/
+dist/
+build/
+
+# Pretrained model weights (auto-downloaded on first run)
+*.pt
+*.onnx
+*.pth
+yolov8n.pt
+yolov8n-pose.pt
+
+# Env
+.env
+.env.local
+.env.production
+firebase-service-account.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Build outputs
+desktop/dist/
+mobile/.expo/
+mobile/dist/
+mobile/web-build/
+
+# Logs
+*.log
+logs/

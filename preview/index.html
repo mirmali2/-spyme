@@ -1,0 +1,2798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SPYME — Premium Surveillance</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+  :root {
+    --bg: #050507;
+    --bg-2: #0c0c10;
+    --card: #131318;
+    --card-2: #1a1a22;
+    --border: #1f1f28;
+    --text: #fafafa;
+    --muted: #6b6b7a;
+    --dim: #3a3a45;
+    --red: #ff3850;
+    --red-dim: #ff385022;
+    --green: #00d97e;
+    --green-dim: #00d97e22;
+    --amber: #ffb547;
+    --amber-dim: #ffb54722;
+    --blue: #4a9eff;
+    --blue-dim: #4a9eff22;
+    --purple: #a855f7;
+    --grad: linear-gradient(135deg, #ff3850 0%, #ff6b6b 100%);
+  }
+
+  body {
+    background:
+      radial-gradient(circle at 10% 0%, #1a0510 0%, transparent 50%),
+      radial-gradient(circle at 90% 100%, #0a0820 0%, transparent 50%),
+      var(--bg);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+    padding: 80px 20px 100px;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 80px;
+  }
+  .logo-mark {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .logo-icon {
+    width: 56px; height: 56px;
+    background: var(--grad);
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+    box-shadow: 0 0 40px rgba(255, 56, 80, 0.4);
+  }
+  h1 {
+    font-size: 64px;
+    font-weight: 900;
+    letter-spacing: -2px;
+    background: linear-gradient(180deg, #fff 0%, #888 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+  .badges {
+    display: flex; justify-content: center; gap: 8px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+  }
+  .badge {
+    padding: 6px 14px;
+    border-radius: 20px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .badge.live { background: var(--red-dim); color: var(--red); border-color: transparent; }
+
+  .phones {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(310px, 340px));
+    justify-content: center;
+    gap: 60px 36px;
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+
+  .phone-wrap { text-align: center; }
+
+  .phone {
+    width: 320px;
+    height: 680px;
+    background: linear-gradient(145deg, #2a2a35, #18181f);
+    border-radius: 52px;
+    padding: 11px;
+    margin: 0 auto;
+    position: relative;
+    box-shadow:
+      inset 0 0 0 2px #3a3a45,
+      0 30px 70px rgba(0,0,0,0.6),
+      0 0 120px rgba(255, 56, 80, 0.08);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .phone:hover {
+    transform: translateY(-12px) scale(1.02);
+    box-shadow:
+      inset 0 0 0 2px #5a5a6a,
+      0 50px 100px rgba(0,0,0,0.7),
+      0 0 180px rgba(255, 56, 80, 0.25);
+  }
+
+  .screen {
+    width: 100%; height: 100%;
+    background: var(--bg-2);
+    border-radius: 42px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Dynamic island */
+  .island {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 110px; height: 32px;
+    background: #000;
+    border-radius: 22px;
+    z-index: 100;
+  }
+
+  .statusbar {
+    height: 50px;
+    padding: 18px 24px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 700;
+    z-index: 5;
+    position: relative;
+  }
+  .sb-icons { display: flex; gap: 6px; font-size: 12px; opacity: 0.8; }
+
+  .label-row {
+    margin-top: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .num {
+    width: 22px; height: 22px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px;
+    color: var(--muted);
+    font-weight: 700;
+  }
+  .label {
+    color: #ccc;
+    font-size: 13px;
+    letter-spacing: 0.3px;
+    font-weight: 600;
+  }
+  .desc {
+    margin-top: 6px;
+    color: var(--dim);
+    font-size: 11px;
+    max-width: 280px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.5;
+  }
+
+  /* ============= SHARED COMPONENTS ============= */
+  .scr-content {
+    flex: 1;
+    padding: 12px 18px 18px;
+    overflow: hidden;
+  }
+  .scr-title {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    margin-top: 8px;
+    margin-bottom: 4px;
+  }
+  .scr-sub {
+    color: var(--muted);
+    font-size: 12px;
+    margin-bottom: 24px;
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .pill.green { background: var(--green-dim); color: var(--green); }
+  .pill.red { background: var(--red-dim); color: var(--red); }
+  .pill.amber { background: var(--amber-dim); color: var(--amber); }
+  .pill.blue { background: var(--blue-dim); color: var(--blue); }
+  .pill.gray { background: var(--card); color: var(--muted); }
+
+  .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .dot.green { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .dot.red { background: var(--red); box-shadow: 0 0 8px var(--red); animation: pulse 1.4s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: 0.4 } }
+
+  /* Bottom tab bar */
+  .tabbar {
+    position: absolute;
+    bottom: 12px;
+    left: 14px; right: 14px;
+    background: rgba(20, 20, 26, 0.85);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 28px;
+    padding: 10px 8px;
+    display: flex;
+    justify-content: space-around;
+  }
+  .tab {
+    flex: 1;
+    text-align: center;
+    padding: 8px 0;
+    font-size: 18px;
+    color: var(--dim);
+    border-radius: 20px;
+    transition: all 0.2s;
+  }
+  .tab.active {
+    background: var(--red);
+    color: white;
+    box-shadow: 0 4px 16px rgba(255, 56, 80, 0.4);
+  }
+
+  /* ============= 1. LOGIN ============= */
+  .login {
+    flex: 1;
+    padding: 40px 28px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background:
+      radial-gradient(circle at 50% 0%, rgba(255, 56, 80, 0.15) 0%, transparent 60%),
+      var(--bg-2);
+  }
+  .big-logo {
+    font-size: 56px;
+    font-weight: 900;
+    letter-spacing: -2px;
+    margin-bottom: 4px;
+    background: linear-gradient(180deg, #fff 0%, #fff5 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .big-tag {
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 40px;
+    font-weight: 500;
+  }
+  .input-group { margin-bottom: 16px; }
+  .input-label {
+    color: var(--dim);
+    font-size: 10px;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .input {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 14px;
+    padding: 16px;
+    font-size: 14px;
+    font-weight: 500;
+    width: 100%;
+  }
+  .input.focused { border-color: var(--red); box-shadow: 0 0 0 4px rgba(255,56,80,0.15); }
+  .btn {
+    background: var(--grad);
+    border-radius: 16px;
+    padding: 18px;
+    text-align: center;
+    color: white;
+    font-weight: 700;
+    font-size: 15px;
+    margin-top: 12px;
+    box-shadow: 0 12px 32px rgba(255, 56, 80, 0.35);
+  }
+  .btn-ghost {
+    background: transparent;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 16px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .btn-ghost b { color: var(--text); }
+  .biometric {
+    margin-top: 28px;
+    text-align: center;
+    color: var(--dim);
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .face-icon {
+    font-size: 28px;
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  /* ============= 2. HOME / DASHBOARD ============= */
+  .home-greet {
+    padding: 4px 18px 0;
+  }
+  .greet {
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .home-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 4px;
+  }
+  .home-name { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
+  .avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #4a9eff, #a855f7);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+  }
+
+  .summary {
+    margin: 18px 18px 16px;
+    background: linear-gradient(135deg, #1a0a14, #0c0c10);
+    border: 1px solid #2a1a20;
+    border-radius: 22px;
+    padding: 18px;
+  }
+  .summary-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 14px;
+  }
+  .summary-label {
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .summary-value {
+    font-size: 32px;
+    font-weight: 800;
+    margin-top: 4px;
+    letter-spacing: -1px;
+  }
+  .summary-value .small { font-size: 14px; color: var(--muted); font-weight: 600; }
+  .stat-row { display: flex; gap: 12px; }
+  .stat-mini { flex: 1; }
+  .stat-mini-label {
+    color: var(--dim);
+    font-size: 10px;
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+  .stat-mini-val {
+    font-size: 16px;
+    font-weight: 700;
+  }
+  .stat-mini-val .delta { font-size: 10px; color: var(--green); margin-left: 4px; }
+
+  .section-h {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 18px;
+    margin-bottom: 10px;
+    margin-top: 8px;
+  }
+  .section-h .t { font-size: 14px; font-weight: 700; }
+  .section-h .a { color: var(--muted); font-size: 11px; font-weight: 600; }
+
+  .cams {
+    display: flex;
+    gap: 10px;
+    padding: 0 18px 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .cams::-webkit-scrollbar { display: none; }
+  .cam {
+    flex-shrink: 0;
+    width: 140px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cam.armed { border-color: rgba(255, 56, 80, 0.3); }
+  .cam-thumb {
+    height: 70px;
+    background:
+      linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.6) 100%),
+      radial-gradient(circle at 60% 40%, #2a2a3a 0%, #0a0a14 100%);
+    border-radius: 12px;
+    margin-bottom: 10px;
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+    padding: 6px;
+  }
+  .cam-thumb.bedroom {
+    background:
+      linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.7) 100%),
+      linear-gradient(135deg, #1a1525 0%, #0a050f 100%);
+  }
+  .cam-thumb.office {
+    background:
+      linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.7) 100%),
+      linear-gradient(135deg, #0f1a25 0%, #050a0f 100%);
+  }
+  .cam-thumb.living {
+    background:
+      linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.7) 100%),
+      linear-gradient(135deg, #251a0f 0%, #0f0a05 100%);
+  }
+  .cam-thumb-emoji { font-size: 32px; opacity: 0.4; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+  .cam-live {
+    position: absolute;
+    top: 6px; left: 6px;
+    background: var(--red);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+  .cam-name {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+  .cam-meta {
+    color: var(--muted);
+    font-size: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .events {
+    padding: 0 18px;
+    margin-top: 4px;
+  }
+  .ev {
+    display: flex;
+    align-items: center;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 12px;
+    margin-bottom: 8px;
+    gap: 12px;
+  }
+  .ev-icon {
+    width: 38px; height: 38px;
+    border-radius: 11px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .ev-icon.person { background: var(--red-dim); }
+  .ev-icon.motion { background: var(--amber-dim); }
+  .ev-icon.face { background: var(--green-dim); }
+  .ev-icon.sound { background: var(--blue-dim); }
+  .ev-info { flex: 1; min-width: 0; }
+  .ev-title { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+  .ev-sub { font-size: 10px; color: var(--muted); }
+  .ev-time { font-size: 10px; color: var(--dim); text-align: right; }
+
+  /* ============= 3. LIVE VIEW ============= */
+  .live {
+    flex: 1;
+    background:
+      radial-gradient(circle at 50% 40%, #2a2a3e 0%, #050505 70%);
+    position: relative;
+    overflow: hidden;
+  }
+  .live-room {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -55%);
+    font-size: 90px;
+    opacity: 0.15;
+  }
+  .live-detect-box {
+    position: absolute;
+    top: 30%; left: 30%;
+    width: 90px; height: 140px;
+    border: 2px solid var(--green);
+    border-radius: 4px;
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.5), 0 0 20px rgba(0, 217, 126, 0.4);
+  }
+  .live-detect-box::before {
+    content: 'Person · 94%';
+    position: absolute;
+    top: -22px; left: -2px;
+    background: var(--green);
+    color: #000;
+    padding: 2px 6px;
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  .live-top {
+    padding: 12px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
+    position: relative;
+  }
+  .live-back-btn {
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(20px);
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+  .live-cam-title {
+    text-align: center;
+    flex: 1;
+  }
+  .live-cam-title .n { font-size: 14px; font-weight: 700; }
+  .live-cam-title .s { font-size: 10px; color: var(--green); font-weight: 600; }
+  .live-quality {
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(20px);
+    padding: 7px 11px;
+    border-radius: 14px;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .live-rec {
+    position: absolute;
+    top: 70px; left: 18px;
+    background: rgba(255, 56, 80, 0.95);
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .live-rec .d { width: 7px; height: 7px; background: white; border-radius: 50%; animation: pulse 1s infinite; }
+
+  .live-bottom {
+    position: absolute;
+    bottom: 30px;
+    left: 14px; right: 14px;
+    background: rgba(20, 20, 26, 0.85);
+    backdrop-filter: blur(30px);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 24px;
+    padding: 16px;
+  }
+  .live-stats {
+    display: flex;
+    justify-content: space-around;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 14px;
+  }
+  .live-stat { text-align: center; }
+  .live-stat .v { font-size: 14px; font-weight: 700; }
+  .live-stat .l { font-size: 9px; color: var(--muted); margin-top: 2px; }
+  .live-actions {
+    display: flex;
+    justify-content: space-around;
+  }
+  .live-act {
+    text-align: center;
+    flex: 1;
+  }
+  .live-act .ic {
+    width: 44px; height: 44px;
+    background: var(--card-2);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    margin: 0 auto 4px;
+  }
+  .live-act.danger .ic { background: var(--red); }
+  .live-act .lbl { font-size: 9px; color: var(--muted); font-weight: 600; }
+
+  /* ============= 4. MULTI-GRID ============= */
+  .grid {
+    flex: 1;
+    padding: 12px 14px;
+  }
+  .grid-title {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+  .grid-tabs {
+    display: flex;
+    gap: 6px;
+    margin: 14px 0;
+  }
+  .grid-tab {
+    padding: 6px 12px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .grid-tab.active {
+    background: white;
+    color: black;
+    border-color: white;
+  }
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .grid-cam {
+    aspect-ratio: 1 / 1.1;
+    border-radius: 14px;
+    background:
+      linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.85) 100%),
+      linear-gradient(135deg, #1a1525 0%, #0a050f 100%);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: flex-end;
+    padding: 8px;
+  }
+  .grid-cam.b2 { background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.85) 100%), linear-gradient(135deg, #0f1a25 0%, #050a0f 100%); }
+  .grid-cam.b3 { background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.85) 100%), linear-gradient(135deg, #251a0f 0%, #0f0a05 100%); }
+  .grid-cam.b4 { background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.85) 100%), linear-gradient(135deg, #15251a 0%, #050f08 100%); }
+  .grid-cam-emoji {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 36px;
+    opacity: 0.2;
+  }
+  .grid-cam-name {
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    z-index: 2;
+  }
+  .grid-cam-status {
+    position: absolute;
+    top: 8px; right: 8px;
+    background: var(--red);
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    box-shadow: 0 0 6px var(--red);
+  }
+  .grid-cam-status.off { background: var(--muted); box-shadow: none; }
+  .grid-cam-live {
+    position: absolute;
+    top: 8px; left: 8px;
+    background: var(--red);
+    color: white;
+    font-size: 8px;
+    font-weight: 800;
+    padding: 2px 5px;
+    border-radius: 3px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ============= 5. CLIPS GALLERY ============= */
+  .clips-search {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 12px;
+    margin-bottom: 14px;
+    color: var(--muted);
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .clips-filters {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 14px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .clips-filters::-webkit-scrollbar { display: none; }
+  .clip-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .clip {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .clip-thumb {
+    aspect-ratio: 1.2;
+    background: linear-gradient(135deg, #2a2a3a 0%, #0a0a14 100%);
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    padding: 6px;
+  }
+  .clip-thumb.t2 { background: linear-gradient(135deg, #2a1525 0%, #0f0a14 100%); }
+  .clip-thumb.t3 { background: linear-gradient(135deg, #15252a 0%, #0a0f14 100%); }
+  .clip-thumb.t4 { background: linear-gradient(135deg, #25201a 0%, #14100a 100%); }
+  .clip-play {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 32px; height: 32px;
+    background: rgba(255,255,255,0.95);
+    color: black;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+  }
+  .clip-dur {
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-size: 9px;
+    font-weight: 700;
+  }
+  .clip-info {
+    padding: 8px;
+  }
+  .clip-time {
+    font-size: 10px;
+    font-weight: 700;
+  }
+  .clip-loc {
+    font-size: 9px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  /* ============= 6. SCHEDULE ============= */
+  .sched-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 14px;
+    margin-bottom: 10px;
+  }
+  .sched-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .sched-name { font-size: 14px; font-weight: 700; }
+  .toggle {
+    width: 38px; height: 22px;
+    background: var(--green);
+    border-radius: 12px;
+    position: relative;
+    box-shadow: inset 0 0 0 1px var(--green);
+  }
+  .toggle::after {
+    content: '';
+    position: absolute;
+    width: 18px; height: 18px;
+    background: white;
+    border-radius: 50%;
+    top: 2px; right: 2px;
+  }
+  .toggle.off {
+    background: var(--card-2);
+    box-shadow: inset 0 0 0 1px var(--border);
+  }
+  .toggle.off::after { right: auto; left: 2px; }
+  .sched-time {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    margin-bottom: 6px;
+  }
+  .sched-time .arrow { color: var(--muted); margin: 0 6px; }
+  .sched-days {
+    display: flex;
+    gap: 4px;
+    margin-top: 8px;
+  }
+  .day {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    background: var(--card-2);
+    color: var(--muted);
+  }
+  .day.on { background: var(--red); color: white; }
+
+  /* ============= 7. DETECTION ZONES ============= */
+  .zones-canvas {
+    aspect-ratio: 1.3;
+    background:
+      radial-gradient(circle at 60% 40%, #2a2a3e 0%, #0a0a14 100%);
+    border-radius: 14px;
+    position: relative;
+    margin-bottom: 14px;
+    overflow: hidden;
+  }
+  .zone-room { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 60px; opacity: 0.2; }
+  .zone-area {
+    position: absolute;
+    border: 2px solid var(--green);
+    background: rgba(0, 217, 126, 0.12);
+    border-radius: 4px;
+  }
+  .zone-area.z1 { top: 18%; left: 12%; width: 36%; height: 42%; }
+  .zone-area.z2 { bottom: 12%; right: 10%; width: 38%; height: 36%; border-color: var(--red); background: rgba(255, 56, 80, 0.12); }
+  .zone-label {
+    position: absolute;
+    top: -10px; left: 4px;
+    background: var(--green);
+    color: black;
+    font-size: 9px;
+    font-weight: 800;
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+  .zone-area.z2 .zone-label { background: var(--red); color: white; }
+  .zone-handle {
+    position: absolute;
+    width: 10px; height: 10px;
+    background: white;
+    border-radius: 50%;
+    border: 2px solid currentColor;
+  }
+  .zone-handle.tl { top: -5px; left: -5px; }
+  .zone-handle.tr { top: -5px; right: -5px; }
+  .zone-handle.bl { bottom: -5px; left: -5px; }
+  .zone-handle.br { bottom: -5px; right: -5px; }
+
+  .zone-list-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 12px;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .zone-li-left { display: flex; align-items: center; gap: 8px; }
+  .zone-color {
+    width: 14px; height: 14px;
+    border-radius: 4px;
+  }
+  .zone-li-name { font-size: 12px; font-weight: 600; }
+  .zone-li-sub { font-size: 9px; color: var(--muted); }
+
+  /* ============= 8. ACTIVITY HEATMAP ============= */
+  .stat-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 12px;
+  }
+  .sc-label { font-size: 10px; color: var(--muted); font-weight: 600; }
+  .sc-value { font-size: 22px; font-weight: 800; margin-top: 4px; letter-spacing: -0.5px; }
+  .sc-trend { font-size: 10px; font-weight: 600; margin-top: 2px; }
+  .sc-trend.up { color: var(--green); }
+  .sc-trend.down { color: var(--red); }
+  .heatmap-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 14px;
+  }
+  .heatmap-title { font-size: 12px; font-weight: 700; margin-bottom: 10px; }
+  .hm-grid {
+    display: grid;
+    grid-template-columns: 22px repeat(24, 1fr);
+    gap: 2px;
+    align-items: center;
+  }
+  .hm-day { font-size: 8px; color: var(--muted); }
+  .hm-cell {
+    aspect-ratio: 1;
+    border-radius: 1.5px;
+  }
+  .hm-cell.l0 { background: #1a1a22; }
+  .hm-cell.l1 { background: #3a1520; }
+  .hm-cell.l2 { background: #5a1a28; }
+  .hm-cell.l3 { background: #aa2030; }
+  .hm-cell.l4 { background: #ff3850; }
+  .hm-legend {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 10px;
+    font-size: 9px;
+    color: var(--muted);
+    justify-content: flex-end;
+  }
+  .legend-row { display: flex; gap: 2px; }
+  .legend-cell { width: 9px; height: 9px; border-radius: 1.5px; }
+
+  /* ============= 9. ALERTS / NOTIFICATIONS ============= */
+  .alert-bg {
+    flex: 1;
+    background:
+      linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.7) 70%),
+      url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 600"><rect width="320" height="600" fill="%23050505"/><circle cx="160" cy="200" r="140" fill="%231a0510" opacity="0.6"/></svg>');
+    padding: 90px 14px 14px;
+    background-size: cover;
+  }
+  .lock-time {
+    text-align: center;
+    color: white;
+    font-size: 78px;
+    font-weight: 200;
+    letter-spacing: -3px;
+    margin-bottom: -8px;
+  }
+  .lock-date {
+    text-align: center;
+    color: rgba(255,255,255,0.7);
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 30px;
+  }
+  .notif {
+    background: rgba(40,40,50,0.65);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 18px;
+    padding: 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    margin-bottom: 8px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  }
+  .notif-icon {
+    width: 38px; height: 38px;
+    background: var(--grad);
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .notif-icon.green { background: var(--green); }
+  .notif-icon.blue { background: var(--blue); }
+  .notif-body { flex: 1; min-width: 0; }
+  .notif-app { font-size: 10px; color: rgba(255,255,255,0.7); font-weight: 600; margin-bottom: 1px; display: flex; justify-content: space-between; }
+  .notif-title { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+  .notif-text { font-size: 12px; color: rgba(255,255,255,0.85); line-height: 1.3; }
+
+  /* ============= 10. PEOPLE / FACES ============= */
+  .face-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+  }
+  .face {
+    text-align: center;
+  }
+  .face-avatar {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #4a9eff, #a855f7);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 6px;
+    border: 2px solid var(--border);
+  }
+  .face-avatar.f2 { background: linear-gradient(135deg, #ff3850, #ffb547); }
+  .face-avatar.f3 { background: linear-gradient(135deg, #00d97e, #4a9eff); }
+  .face-avatar.f4 { background: linear-gradient(135deg, #a855f7, #ff3850); }
+  .face-avatar.unknown {
+    background: var(--card-2);
+    color: var(--muted);
+    border: 2px dashed var(--border);
+    font-size: 20px;
+  }
+  .face-name { font-size: 11px; font-weight: 600; }
+  .face-tag {
+    font-size: 9px;
+    color: var(--green);
+    margin-top: 2px;
+    font-weight: 600;
+  }
+  .face-tag.alert { color: var(--red); }
+
+  .add-face {
+    background: linear-gradient(135deg, var(--card), var(--card-2));
+    border: 1px dashed var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    margin-top: 16px;
+    text-align: center;
+  }
+  .add-face-icon { font-size: 22px; margin-bottom: 4px; color: var(--muted); }
+  .add-face-text { font-size: 11px; color: var(--muted); font-weight: 600; }
+
+  /* ============= 11. SETTINGS ============= */
+  .set-section { margin-bottom: 18px; }
+  .set-section-h {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    padding: 0 4px;
+  }
+  .set-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .set-row {
+    display: flex;
+    align-items: center;
+    padding: 13px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .set-row:last-child { border-bottom: none; }
+  .set-icon {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    margin-right: 12px;
+  }
+  .set-icon.r { background: var(--red-dim); color: var(--red); }
+  .set-icon.g { background: var(--green-dim); color: var(--green); }
+  .set-icon.b { background: var(--blue-dim); color: var(--blue); }
+  .set-icon.a { background: var(--amber-dim); color: var(--amber); }
+  .set-icon.p { background: rgba(168, 85, 247, 0.15); color: var(--purple); }
+  .set-text { flex: 1; }
+  .set-title { font-size: 13px; font-weight: 600; }
+  .set-sub { font-size: 10px; color: var(--muted); margin-top: 1px; }
+  .set-end {
+    color: var(--dim);
+    font-size: 14px;
+    margin-left: 8px;
+  }
+  .set-end.value { color: var(--muted); font-size: 11px; font-weight: 600; }
+
+  /* ============= 12. WATCH FACE ============= */
+  .watch-frame {
+    background: linear-gradient(145deg, #2a2a35, #18181f);
+    border-radius: 50px;
+    padding: 8px;
+    width: 250px;
+    height: 320px;
+    margin: 60px auto 0;
+    position: relative;
+    box-shadow:
+      inset 0 0 0 2px #3a3a45,
+      0 30px 70px rgba(0,0,0,0.6);
+  }
+  .watch-band {
+    position: absolute;
+    width: 80px;
+    background: linear-gradient(180deg, #2a2a35, #1a1a22);
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .watch-band.top {
+    top: -40px;
+    height: 50px;
+    border-radius: 14px 14px 8px 8px;
+  }
+  .watch-band.bot {
+    bottom: -40px;
+    height: 50px;
+    border-radius: 8px 8px 14px 14px;
+  }
+  .watch-screen {
+    width: 100%; height: 100%;
+    background: black;
+    border-radius: 42px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+  }
+  .watch-time {
+    color: white;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    margin-bottom: 14px;
+  }
+  .watch-alert {
+    background: linear-gradient(135deg, #ff3850, #b8253a);
+    border-radius: 18px;
+    padding: 12px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+  }
+  .watch-icon { font-size: 28px; margin-bottom: 6px; }
+  .watch-title { font-size: 13px; font-weight: 800; margin-bottom: 2px; }
+  .watch-sub { font-size: 10px; opacity: 0.9; }
+  .watch-cta {
+    margin-top: 10px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 10px;
+    padding: 6px;
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  /* ============= FIRE ALARM ============= */
+  @keyframes fireFlash {
+    0%, 100% { background: linear-gradient(180deg, #1a0000 0%, #2a0000 100%); }
+    50%      { background: linear-gradient(180deg, #7a0000 0%, #b00000 100%); }
+  }
+  .fire-screen {
+    flex: 1;
+    animation: fireFlash 0.8s infinite;
+    display: flex;
+    flex-direction: column;
+    padding: 60px 22px 22px;
+    color: white;
+  }
+  .fire-banner {
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  .fire-banner .b1 { font-size: 12px; font-weight: 800; letter-spacing: 4px; }
+  .fire-banner .b2 { font-size: 10px; opacity: 0.7; margin-top: 2px; }
+  .fire-icon-big {
+    text-align: center;
+    font-size: 110px;
+    margin: 20px 0 0;
+    animation: fireFlash 0.5s infinite;
+  }
+  .fire-title {
+    text-align: center;
+    font-size: 32px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    margin: 6px 0;
+  }
+  .fire-cam {
+    text-align: center;
+    font-size: 14px;
+    opacity: 0.95;
+    font-weight: 600;
+  }
+  .fire-conf {
+    text-align: center;
+    font-size: 12px;
+    opacity: 0.7;
+    margin-top: 4px;
+  }
+  .fire-actions { margin-top: 24px; display: flex; flex-direction: column; gap: 8px; }
+  .fire-btn-primary {
+    background: white;
+    color: #7a0000;
+    padding: 16px;
+    border-radius: 16px;
+    text-align: center;
+    font-weight: 800;
+    font-size: 14px;
+  }
+  .fire-btn-secondary {
+    background: rgba(255,255,255,0.18);
+    color: white;
+    padding: 14px;
+    border-radius: 16px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 12px;
+  }
+  .fire-dismiss {
+    text-align: center;
+    color: rgba(255,255,255,0.55);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 12px;
+  }
+  .fire-vib {
+    position: absolute;
+    top: 50px; right: 24px;
+    background: rgba(0,0,0,0.4);
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .fire-vib-icon { animation: shake 0.15s infinite; display: inline-block; }
+  @keyframes shake {
+    0%,100% { transform: rotate(-15deg); }
+    50%     { transform: rotate(15deg); }
+  }
+
+  /* ===== Decoration ===== */
+  .feat-bar {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 11px;
+  }
+  .feat-bar-l { display: flex; align-items: center; gap: 8px; }
+  .feat-bar-icon {
+    width: 26px; height: 26px;
+    border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+  }
+
+  .footer {
+    text-align: center;
+    margin-top: 80px;
+    color: var(--dim);
+    font-size: 12px;
+    line-height: 1.8;
+  }
+  .footer .stack {
+    color: var(--muted);
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo-mark">
+    <div class="logo-icon">⊙</div>
+  </div>
+  <h1>SPYME</h1>
+  <p class="subtitle">Premium AI Surveillance · Built for People Who Care</p>
+  <div class="badges">
+    <span class="badge live">● LIVE PREVIEW</span>
+    <span class="badge">27 SCREENS</span>
+    <span class="badge">+ 9 EDGE CASES</span>
+    <span class="badge">MAX 4 LAPTOPS / ACCOUNT</span>
+    <span class="badge live">$5/MO · $50/YR</span>
+    <span class="badge">2-DAY FREE TRIAL</span>
+    <span class="badge live">G CONTINUE WITH GOOGLE</span>
+    <span class="badge live">● AI ENGINE LIVE</span>
+    <span class="badge">YOLOV8 · 80 CLASSES</span>
+    <span class="badge">MULTI-PERSON</span>
+    <span class="badge">THEFT DETECTION</span>
+    <span class="badge live">🔥 FIRE ALARM</span>
+    <span class="badge">SMS · SIREN · VIBRATE</span>
+    <span class="badge">FACE RECOGNITION</span>
+    <span class="badge">SMART ZONES</span>
+    <span class="badge">SCHEDULES</span>
+    <span class="badge">APPLE WATCH</span>
+  </div>
+</div>
+
+<div class="phones">
+
+  <!-- ============================== 1. LOGIN ============================== -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="screen">
+        <div class="island"></div>
+        <div class="statusbar"><span>9:41</span><div class="sb-icons"><span>5G</span><span>📶</span><span>🔋</span></div></div>
+        <div class="login" style="padding-top:30px;">
+          <div class="big-logo">SPYME</div>
+          <div class="big-tag" style="margin-bottom:18px;">Your space. Your surveillance.</div>
+
+          <!-- Sign in / Sign up tabs -->
+          <div style="display:flex; background:#141414; border-radius:12px; padding:4px; margin-bottom:18px;">
+            <div style="flex:1; padding:9px; text-align:center; background:var(--red); border-radius:9px; color:white; font-weight:700; font-size:12px;">Sign In</div>
+            <div style="flex:1; padding:9px; text-align:center; color:#666; font-weight:700; font-size:12px;">Create Account</div>
+          </div>
+
+          <!-- Continue with Google — primary CTA -->
+          <div style="background:white; border-radius:13px; padding:13px; display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:10px;">
+            <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.6-6 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.8 1.1 7.9 3l5.7-5.7C34 6.5 29.3 4.5 24 4.5 12.7 4.5 3.5 13.7 3.5 25S12.7 45.5 24 45.5 44.5 36.3 44.5 25c0-1.5-.2-3-.5-4.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3 0 5.8 1.1 7.9 3l5.7-5.7C34 6.5 29.3 4.5 24 4.5c-7.4 0-13.7 4.1-17.7 10.2z"/><path fill="#4CAF50" d="M24 45.5c5.2 0 10-2 13.6-5.2l-6.3-5.3c-1.9 1.4-4.4 2.3-7.3 2.3-5.3 0-9.7-3.4-11.3-8L6.2 34c3.9 6.2 10.4 11.5 17.8 11.5z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4 5.5l6.3 5.3c-.4.4 6.9-5 6.9-13.8 0-1.5-.2-3-.5-4.5z"/></svg>
+            <span style="color:#1f1f1f; font-weight:700; font-size:14px;">Continue with Google</span>
+          </div>
+
+          <!-- "Store in MY Drive" toggle -->
+          <div style="background:#0d0d0d; border:1px solid #4285F4; border-radius:11px; padding:10px 12px; display:flex; align-items:center; gap:10px; margin-bottom:18px;">
+            <div style="width:18px; height:18px; border-radius:4px; background:#4285F4; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; font-weight:900;">✓</div>
+            <div style="flex:1;">
+              <div style="color:white; font-size:11px; font-weight:600;">Store clips in MY Google Drive</div>
+              <div style="color:#666; font-size:9px; margin-top:1px;">Privacy-first · videos stay in your cloud</div>
+            </div>
+          </div>
+
+          <!-- divider -->
+          <div style="display:flex; align-items:center; margin-bottom:18px;">
+            <div style="flex:1; height:1px; background:#222;"></div>
+            <div style="color:#555; font-size:9px; margin:0 12px; letter-spacing:1px;">OR EMAIL</div>
+            <div style="flex:1; height:1px; background:#222;"></div>
+          </div>
+
+          <div class="input-group" style="margin-bottom:10px;">
+            <div class="input-label">Email</div>
+            <div class="input">mustafa@spyme.app</div>
+          </div>
+          <div class="input-group" style="margin-bottom:14px;">
+            <div class="input-label">Password</div>
+            <div class="input focused">••••••••••</div>
+          </div>
+          <div class="btn" style="margin-bottom:10px;">Sign In Securely</div>
+          <div class="biometric">
+            <span class="face-icon">🆔</span>
+            Use Face ID
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="label-row"><div class="num">1</div><div class="label">Login / Sign Up</div></div>
+    <div class="desc">Continue with Google OR email · optional: store clips in user's own Google Drive</div>
+  </div>
+
+  <!-- ============================== 2. HOME / DASHBOARD ============================== -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="screen">
+        <div class="island"></div>
+        <div class="statusbar"><span>9:41</span><div class="sb-icons"><span>5G</span><span>📶</span><span>🔋</span></div></div>
+
+        <div class="home-greet">
+          <div class="greet">Saturday, May 3 · Good morning</div>
+          <div class="home-title-row">
+            <div class="home-name">Hi, Mustafa</div>
+            <div class="avatar">M</div>
+          </div>
+        </div>
+
+        <div class="summary">
+          <div class="summary-top">
+            <div>
+              <div class="summary-label">All Quiet</div>
+              <div class="summary-value">3<span class="small"> cameras armed</span></div>
+            </div>
+            <div class="pill green"><span class="dot green"></span>SECURE</div>
+          </div>
+          <div class="stat-row">
+            <div class="stat-mini">
+              <div class="stat-mini-label">Today's events</div>
+              <div class="stat-mini-val">12 <span class="delta">↓ 40%</span></div>
+            </div>
+            <div class="stat-mini">
+              <div class="stat-mini-label">People seen</div>
+              <div class="stat-mini-val">2 <span class="delta" style="color:var(--muted)">known</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-h"><div class="t">Cameras</div><div class="a">View all</div></div>
+        <div class="cams">
+          <div class="cam armed">
+            <div class="cam-thumb bedroom">
+              <div class="cam-thumb-emoji">🛏</div>
+              <div class="cam-live"><span class="dot red"></span>LIVE</div>
+            </div>
+            <div class="cam-name">Bedroom</div>
+            <div class="cam-meta"><span>🔋 87%</span><span class="pill red" style="padding:1px 6px;font-size:8px">ARMED</span></div>
+          </div>
+          <div class="cam armed">
+            <div class="cam-thumb office">
+              <div class="cam-thumb-emoji">💻</div>
+              <div class="cam-live"><span class="dot red"></span>LIVE</div>
+            </div>
+            <div class="cam-name">Office Mac</div>
+            <div class="cam-meta"><span>🔋 62%</span><span class="pill red" style="padding:1px 6px;font-size:8px">ARMED</span></div>
+          </div>
+          <div class="cam">
+            <div class="cam-thumb living">
+              <div class="cam-thumb-emoji">🛋</div>
+            </div>
+            <div class="cam-name">Living Room</div>
+            <div class="cam-meta"><span>🔋 100%</span><span class="pill gray" style="padding:1px 6px;font-size:8px">OFF</span></div>
+          </div>
+        </div>
+
+        <div class="section-h" style="margin-top:14px"><div class="t">Recent Activity</div><div class="a">See all</div></div>
+        <div class="events">
+          <div class="ev">
+            <div class="ev-icon face">😊</div>
+            <div class="ev-info"><div class="ev-title">Sarah arrived home</div><div class="ev-sub">Living Room · Known person</div></div>
+            <div class="ev-time">2m ago</div>
+          </div>
+          <div class="ev">
+            <div class="ev-icon person">🚨</div>
+            <div class="ev-info"><div class="ev-title">Unknown person detected</div><div class="ev-sub">Bedroom · 94% confidence</div></div>
+            <div class="ev-time">14m ago</div>
+          </div>
+        </div>
+
+        <div class="tabbar">
+          <div class="tab active">⌂</div>
+          <div class="tab">▦</div>
+          <div class="tab">▶</div>
+          <div class="tab">⊙</div>
+          <div class="tab">⚙</div>
+        </div>
+      </div>
+    </div>
+    <div class="label-row"><div class="num">2</div><div class="label">Smart Home</div></div>
+    <div class="desc">Personalized greeting · Security summary · Live camera grid · Activity feed</div>
+  </div>
+
+  <!-- ============================== 3. LIVE VIEW ============================== -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="screen">
+        <div class="island"></div>
+        <div class="statusbar"><span>9:41</span><div class="sb-icons"><span>5G</span><span>📶</span><span>🔋</span></div></div>
+        <div class="live">
+          <div class="live-room">🛏</div>
+          <div class="live-detect-box"></div>
+          <div class="live-top">
+            <div class="live-back-btn">‹</div>
+            <div class="live-cam-title">
+              <div class="n">Bedroom Laptop</div>
+              <div class="s"><span class="dot green"></span> P2P · 240ms</div>
+            </div>
+            <div class="live-quality">HD</div>
+          </div>
+          <div class="live-rec"><span class="d"></span>REC 0:24</div>
+
+          <div class="live-bottom">
+            <div class="live-stats">
+              <div class="live-stat"><div class="v">30</div><div class="l">FPS</div></div>
+              <div class="live-stat"><div class="v">240ms</div><div class="l">LATENCY</div></div>
+              <div class="live-stat"><div class="v">2.4Mb/s</div><div class="l">BITRATE</div></div>
+              <div class="live-stat"><div class="v">P2P</div><div class="l">ROUTE</div></div>
+            </div>
+            <div class="live-actions">
+              <div class="live-act"><div class="ic">📷</div><div class="lbl">Snap</div></div>
+              <div class="live-act"><div class="ic">🎙</div><div class="lbl">Talk</div></div>
+              <div class="live-act"><div class="ic">🔊</div><div class="lbl">Audio</div></div>
+              <div class="live-act danger"><div class="ic">🛡</div><div class="lbl">Disarm</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="label-row"><div class="num">3</div><div class="label">Live View</div></div>
+    <div class="desc">Real-time WebRTC P2P · AI bounding boxes · Two-way intercom audio</div>
+  </div>
+
+  <!-- ============================== 4. MULTI-CAMERA GRID ============================== -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="screen">
+        <div class="island"></div>
+        <div class="statusbar"><span>9:41</span><div class="sb-icons"><span>5G</span><span>📶</span><span>🔋</span></div></div>
+        <div class="grid">
+          <div class="grid-title">All Cameras</div>
+          <div class="scr-sub" style="margin-bottom:0">3 online · 1 offline</div>
+          <div class="grid-tabs">
+            <div class="grid-tab active">2×2</div>
+            <div class="grid-tab">List</div>
+            <div class="grid-tab">Map</div>
+          </div>
+          <div class="grid-2">
+            <div class="grid-cam">
+              <div class="grid-cam-emoji">🛏</div>
+              <div class="grid-cam-live">LIVE</div>
+              <div class="grid-cam-status"></div>
+              <div class="grid-cam-name">Bedroom</div>
+            </div>
+            <div class="grid-cam b2">
+              <div class="grid-cam-emoji">💻</div>
+              <div class="grid-cam-live">LIVE</div>
+              <div class="grid-cam-status"></div>
+              <div class="grid-cam-name">Office Mac</div>
+            </div>
+            <div class="grid-cam b3">
+              <div class="grid-cam-emoji">🛋</div>
+              <div class="grid-cam-status off"></div>
+              <div class="grid-cam-name">Living Room</div>
+            </div>
+            <div class="grid-cam b4">
+              <div class="grid-cam-emoji">🚪</div>
+              <div class="grid-cam-live">LIVE</div>
+              <div class="grid-cam-status"></div>
+              <div class="grid-cam-name">Front Door</div>
+            </div>
+          </div>
+        </div>
+        <div class="tabbar">
+          <div class="tab">⌂</div>
+          <div class="tab active">▦</div>
+          <div class="tab">▶</div>
+          <div class="tab">⊙</div>
+          <div class="tab">⚙</div>
+        </div>
+      </div>
+    </div>
+    <div class="label-row"><div class="num">4</div><div class="label">Multi-Camera Grid</div></div>
+    <div class="desc">All feeds at once · Tap any camera to expand · Map view available</div>
+  </div>
+
+  <!-- ============================== 5. CLIPS GALLERY ============================== -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="screen">
+        <div class="island"></div>
+        <div class="statusbar"><span>9:41</span><div class="sb-icons"><span>5G</span><span>📶</span><span>🔋</span></div></div>
+        <div class="scr-content">
+          <div class="scr-title">Clips</div>
+          <div class="scr-sub">142 recordings · 4.2 GB</div>
+          <div class="clips-search">🔍 Search by date, person, or camera</div>
+          <div class="clips-filters">
+            <div class="grid-tab active">All</div>
+            <div class="grid-tab">Person</div>
+            <div class="grid-tab">Motion</div>
+            <div class="grid-tab">Bedroom</div>
+          </div>
+          <div class="clip-grid">
+            <div class="clip">
+              <div class="clip-thumb">
+                <div class="clip-play">▶</div>
+                <div class="clip-dur">0:24</div>
+              </div>
+              <div class="clip-info">
+                <div class="clip-time">3:42 PM · Today</div>
+                <div class="clip-loc">Bedroom · Person</div>
+              </div>
+            </div>
+            <div class="clip">
+              <div class="clip-thumb t2">
+                <div class="clip-play">▶</div>
+                <div class="clip-dur">0:18</div>
+              </div>
+              <div class="clip-info">
+                <div class="clip-time">11:02 AM · Today</div>
+                <div class="clip-loc">Office · Sarah</div>
+              </div>
+            </div>
+            <div class="clip">
+              <div class="clip-thumb t3">
+                <div class="clip-play">▶</div>
+                <div class="clip-dur">1:05</div>
+              </div>
+              <div class="clip-info">
+                <div class="clip-time">8:14 PM · May 2</div>
+                <div class="clip-loc">Living · Motion</div>
+              </div>
+            </div>
+            <div class="clip">
+              <div class="clip-thumb t4">
+                <div class="clip-play">▶</div>
+                <div class="clip-dur">0:42</div>
+              </div>
+              <div class="clip-info">
+                <div class="clip-time">2:33 AM · May 2</div>
+                <div class="clip-loc">Front · Unknown</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tabbar">
+          <div class="tab">⌂</div>
+          <div class="tab">▦</div>
+          <div class="tab active">▶</div>
+          <div class="tab">⊙</div>
+          <div class="tab">⚙</div>
+        </div>
+      </div>
+    </div>
+    <div class="label-row"><div class="num">5</div><div class="label">Clips Gallery</div></div>
+    <div class="desc">Searchable archive · AI-tagged clips · Quick share to Photos / contacts</div>
+  </div>
+
+  <!-- ============================== 6. SCHEDULES ============================== -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="screen">
+        <div class="island"></div>
+        <div class="statusbar"><span>9:41</span><div class="sb-icons"><span>5G</span><span>📶</span><span>🔋</span></div></div>
+        <div class="scr-content">
+          <div class="scr-title">Schedules</div>
+          <div class="scr-sub">Auto-arm and disarm by time</div>
+
+          <div class="sched-card">
+            <div class="sched-top">
+              <div class="sched-name">🌙 Sleeping Hours</div>
+              <div class="toggle"></div>
+            </div>
+            <div class="sched-time">11:00 PM <span class="arrow">→</span> 7:00 AM</div>
+            <div class="scr-sub" style="margin-bottom:0">All cameras armed</div>
+            <div class="sched-days">
+              <div class="day on">M</div><div class="day on">T</div><div class="day on">W</div>
+              <div class="day on">T</div><div class="day on">F</div><div class="day on">S</div><div class="day on">S</div>
+            </div>
+          </div>
+
+          <div class="sched-card">
+            <div class="sched-top">
+              <div class="sched-name">🏢 Work Hours</div>
+              <div class="toggle"></div>
+            </div>
+            <div class="sched-time">9:00 AM <span class="arrow">→</span> 6:00 PM</div>
+            <div class="scr-sub" style="margin-bottom:0">Office Mac armed</div>
+            <div class="sched-days">
+              <div class="day on">M</div><div class="day on">T</div><div class="day on">W</div>
+              <div class="day on">T</div><div class="day on">F</div><div class="day">S</div><div class="day">S</div>
+            </div>
+          </div>
+
+          <div class="sched-card">
+            <div class="sched-top">
+              <div class="sched-name">📍 When I'm Away</div>
+              <div class="toggle off"></div>
+            </div>
+            <div class="sched-time" style="font-size:14px;color:var(--muted)">Geofence · 200m from home</div>
+            <div class="scr-sub" style="margin-bottom:0">All cameras armed automatically</div>
+          </div>
+
+          <div class="btn" style="margin-top:8px">+ Add Schedule</div>
+        </div>
+      </div>
+    </div>
+    <div class="label-row"><div class="num">6</div><div class="label">Smart Schedules</div></div>
+    <div class="desc">Time-based · Geofencing · Per-camera rules · Vacation mode</div>
+  </div>
+
+  <!-- ============================== 7. DETECTION ZONES ============================== -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="screen">
+        <div class="island"></div>
+        <div class="statusbar"><span>9:41</span><div class="sb-icons"><span>5G</span><span>📶</span><span>🔋</span></div></div>
+        <div class="scr-content">
+          <div class="scr-title">Detection Zones</div>
+          <div class="scr-sub">Bedroom · Draw what to watch</div>
+
+          <div class="zones-canvas">
+            <div class="zone-room">🛏</div>
+            <div class="zone-area z1">
+              <div class="zone-label">Bed Area</div>
+              <div class="zone-handle tl"></div>
+              <div class="zone-handle tr"></div>
+              <div class="zone-handle bl"></div>
+              <div class="zone-handle br"></div>
+            </div>
+            <div class="zone-area z2">
+              <div class="zone-label">Door (Alert)</div>
+              <div class="zone-handle tl"></div>
+              <div class="zone-handle tr"></div>
+              <div class="zone-handle bl"></div>
+              <div class="zone-handle br"></div>
+            </div>
+          </div>
+
+          <div class="zone-list-item">
+            <div class="zone-li-left">
+              <div class="zone-color" style="background:var(--green)"></div>
+              <div>
+                <div class="zone-li-name">Bed Area</div>
+                <div class="zone-li-sub">Ignore motion (pet zone)</div>
+              </div>
+            </div>
+            <div class="set-end">›</div>
+          </div>
+          <div class="zone-list-item">
+            <div class="zone-li-left">
+              <div class="zone-color" style="background:var(--red)"></div>
+              <div>
+                <div class="zone-li-name">Door (Alert)</div>
+                <div class="zone-li-sub">Person → high priority alert</div>
+              </div>
+            </div>
+            <div class="set-end">›</div>
+          </div>
+
+          <div class="btn" style="margin-top:6px">+ Add New Zone</div>
+        </div>
+      </div>
+    </div>
+    <div class="label-row"><div class="num">7</div><div class="label">Detection Zones</div></div>
+    <div class="desc">Draw safe / alert regions · Ignore pets · Priority zones for entrances</div>
+  </div>
+
+  <!-- ============================== 8. ANALYTICS / HEATMAP ============================== -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="screen">
+        <div class="island"></div>
+        <div class="statusbar"><span>9:41</span><div class="sb-icons"><span>5G</span><span>📶</span><span>🔋</span></div></div>
+        <div class="scr-content">
+          <div class="scr-title">Insights</div>
+          <div class="scr-sub">Last 7 days</div>
+
+          <div class="stat-cards">
+            <div class="stat-card">
+              <div class="sc-label">Events</div>
+              <div class="sc-value">87</div>
+              <div class="sc-trend down">↓ 23% vs last week</div>
+            </div>
+            <div class="stat-card">
+              <div class="sc-label">People seen</div>
+              <div class="sc-value">14</div>
+              <div class="sc-trend up">↑ 4 new</div>
+            </div>
+            <div class="stat-card">
+              <div class="sc-label">Storage</div>
+              <div class="sc-value">4.2<span style="font-size:14px;color:var(--muted)"> GB</span></div>
+              <div class="sc-trend" style="color:var(--muted)">of 50 GB</div>
+            </div>
+            <div class="stat-card">
+              <div class="sc-label">Uptime</div>
+              <div class="sc-value">99.8<span style="font-size:14px;color:var(--muted)">%</span></div>
+              <div class="sc-trend up">↑ 0.4%</div>
+            </div>
+          </div>
+
+          <div class="heatmap-card">
+            <div class="heatmap-title">Activity Heatmap</div>
+            <div class="hm-grid" id="hm">
+              <!-- generated by JS below -->
+            </div>
+            <div class="hm-legend">
+              Less
+              <div class="legend-row">
+                <div class="legend-cell" style="background:#1a1a22"></div>
+                <div class="legend-cell" style="background:#3a1520"></div>
+                <div class="legend-cell" style="background:#5a1a28"></div>
+                <div class="legend-cell" style="background:#aa2030"></div>
+                <div class="legend-cell" style="background:#ff3850"></div>
+              </div>
+              More
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="label-row"><div class="num">8</div><div class="label">Insights</div></div>
+    <div class="desc">Activity heatmap · Trend analytics · Storage and uptime tracking</div>
+  </div>
+
+  <!-- ============================== 9. PUSH ALERT (LOCK SCREEN) ============================== -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="screen">
+        <div class="island"></div>
+        <div class="statusbar"><span style="color:white">9:41</span><div class="sb-icons"><span>5G</span><span>📶</span><span>🔋</span></div></div>
+        <div class="alert-bg">
+          <div class="lock-time">9:41</div>
+          <div class="lock-date">Saturday, May 3</div>
+
+          <div class="notif">
+            <div class="notif-icon">🚨</div>
+            <div class="notif-body">
+              <div class="notif-app"><span>SPYME</span><span>now</span></div>
+              <div class="notif-title">Unknown person — Front Door</div>
+              <div class="notif-text">Tap to view live · 94% confidence</div>
+            </div>
+          </div>
+
+          <div class="notif">
+            <div class="notif-icon green">😊</div>
+            <div class="notif-body">
+              <div class="notif-app"><span>SPYME</span><span>2m ago</span></div>
+              <div class="notif-title">Sarah arrived home</div>
+              <div class="notif-text">Recognized in Living Room</div>
+            </div>
+          </div>
+
+          <div class="notif">
+            <div class="notif-icon blue">🔊</div>
+            <div class="notif-body">
+              <div class="notif-app"><span>SPYME</span><span>5m ago</span></div>
+              <div class="notif-title">Glass break detected</div>
+              <div class="notif-text">Bedroom — recording 30s clip</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="label-row"><div class="num">9</div><div class="label">Push Alerts</div></div>
+    <div class="desc">Person · Face match · Sound events · Lock-screen actions</div>
+  </div>
+
+  <!-- ============================== 10. PEOPLE / FACE LIBRARY ============================== -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="screen">
+        <div class="island"></div>
+        <div class="statusbar"><span>9:41</span><div class="sb-icons"><span>5G</span><span>📶</span><span>🔋</span></div></div>
+        <div class="scr-content">
+          <div class="scr-title">People</div>
+          <div class="scr-sub">Tag known faces to silence false alarms</div>
+
+          <div class="face-grid">
+            <div class="face">
+              <div class="face-avatar">M</div>
+              <div class="face-name">Mustafa</div>
+              <div class="face-tag">✓ Trusted</div>
+            </div>
+            <div class="face">
+              <div class="face-avatar f2">S</div>
+              <div class="face-name">Sarah</div>
+              <div class="face-tag">✓ Trusted</div>
+            </div>
+            <div class="face">
+              <div class="face-avatar f3">A</div>
+              <div class="face-name">Ali</div>
+              <div class="face-tag">✓ Family</div>
+            </div>
+            <div class="face">
+              <div class="face-avatar f4">R</div>
+              <div class="face-name">Rida</div>
+              <div class="face-tag">✓ Family</div>
+            </div>
+            <div class="face">
+              <div class="face-avatar unknown">?</div>
+              <div class="face-name">Unknown</div>
+              <div class="face-tag alert">3 sightings</div>
+            </div>
+            <div class="face">
+              <div class="face-avatar unknown">+</div>
+              <div class="face-name" style="color:var(--muted)">Add face</div>
+              <div class="face-tag" style="color:var(--dim)">From a clip</div>
+            </div>
+          </div>
+
+          <div class="add-face" style="background:linear-gradient(135deg,rgba(255,56,80,0.06),transparent);border:1px solid rgba(255,56,80,0.2);">
+            <div style="font-size:11px;color:var(--text);font-weight:700;margin-bottom:4px">⚠️ Unknown person seen 3× this week</div>
+            <div style="font-size:10px;color:var(--muted)">Tap to review clips and tag them</div>
+          </div>
+        </div>
+        <div class="tabbar">
+          <div class="tab">⌂</div>
+          <div class="tab">▦</div>
+          <div class="tab">▶</div>
+          <div class="tab active">⊙</div>
+          <div class="tab">⚙</div>
+        </div>
+      </div>
+    </div>
+    <div class="label-row"><div class="num">10</div><div class="label">Face Library</div></div>
+    <div class="desc">On-device face recognition · Smart filters · Auto-tag known visitors</div>
+  </div>
+
+  <!-- ============================== 11. SETTINGS ============================== -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="screen">
+        <div class="island"></div>
+        <div class="statusbar"><span>9:41</span><div class="sb-icons"><span>5G</span><span>📶</span><span>🔋</span></div></div>
+        <div class="scr-content" style="overflow-y:auto">
+          <div class="scr-title">Settings</div>
+          <div class="scr-sub">Customize SPYME for your home</div>
+
+          <div class="set-section">
+            <div class="set-section-h">Detection</div>
+            <div class="set-card">
+              <div class="set-row">
+                <div class="set-icon r">🚨</div>
+                <div class="set-text"><div class="set-title">Alert sensitivity</div><div class="set-sub">Higher = more alerts</div></div>
+                <div class="set-end value">High</div>
+              </div>
+              <div class="set-row">
+                <div class="set-icon a">🐕</div>
+                <div class="set-text"><div class="set-title">Ignore pets</div><div class="set-sub">Skip cats and dogs</div></div>
+                <div class="toggle"></div>
+              </div>
+              <div class="set-row">
+                <div class="set-icon b">🔊</div>
+                <div class="set-text"><div class="set-title">Sound detection</div><div class="set-sub">Glass break, alarms</div></div>
+                <div class="toggle"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="set-section">
+            <div class="set-section-h">Privacy</div>
+            <div class="set-card">
+              <div class="set-row">
+                <div class="set-icon g">🔒</div>
+                <div class="set-text"><div class="set-title">End-to-end encryption</div><div class="set-sub">Active for all clips</div></div>
+                <div class="set-end value" style="color:var(--green)">ON</div>
+              </div>
+              <div class="set-row">
+                <div class="set-icon p">🚫</div>
+                <div class="set-text"><div class="set-title">Audio recording</div><div class="set-sub">Disabled by default</div></div>
+                <div class="toggle off"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="set-section">
+            <div class="set-section-h">Storage & Plan</div>
+            <div class="set-card">
+              <div class="set-row">
+                <div class="set-icon b">☁️</div>
+                <div class="set-text"><div class="set-title">Cloud storage</div><div class="set-sub">4.2 of 50 GB used</div></div>
+                <div class="set-end value">Pro</div>
+              </div>
+              <div class="set-row">
+                <div class="set-icon a">📱</div>
+                <div class="set-text"><div class="set-title">Trusted devices</div><div class="set-sub">3 phones, 1 watch</div></div>
+                <div class="set-end">›</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tabbar">
+          <div class="tab">⌂</div>
+          <div class="tab">▦</div>
+          <div class="tab">▶</div>
+          <div class="tab">⊙</div>
+          <div class="tab active">⚙</div>
+        </div>
+      </div>
+    </div>
+    <div class="label-row"><div class="num">11</div><div class="label">Settings</div></div>
+    <div class="desc">Sensitivity tuning · Privacy controls · E2E encryption · Plan management</div>
+  </div>
+
+  <!-- ============================== 12B. AI ENGINE LIVE ============================== -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="screen">
+        <div class="island"></div>
+        <div class="statusbar"><span style="color:white">9:41</span><div class="sb-icons"><span>5G</span><span>📶</span><span>🔋</span></div></div>
+        <div class="live">
+          <div class="live-room" style="font-size:60px;top:30%;">🛏</div>
+
+          <!-- Multiple person bounding boxes -->
+          <div style="position:absolute; top:22%; left:18%; width:65px; height:130px; border:2px solid var(--green); border-radius:3px; box-shadow:0 0 14px rgba(0,217,126,0.5);">
+            <div style="position:absolute; top:-22px; left:-2px; background:var(--green); color:black; padding:2px 6px; font-size:10px; font-weight:800; border-radius:3px; white-space:nowrap;">#1 · Mustafa · sitting</div>
+          </div>
+          <div style="position:absolute; top:25%; right:18%; width:75px; height:140px; border:2px solid var(--amber); border-radius:3px; box-shadow:0 0 14px rgba(255,181,71,0.5);">
+            <div style="position:absolute; top:-22px; left:-2px; background:var(--amber); color:black; padding:2px 6px; font-size:10px; font-weight:800; border-radius:3px; white-space:nowrap;">#2 · ? · reaching</div>
+          </div>
+          <!-- Object box that's 'missing' -->
+          <div style="position:absolute; bottom:30%; left:38%; width:40px; height:30px; border:2px dashed var(--red); border-radius:3px; opacity:0.6;">
+            <div style="position:absolute; top:-22px; left:-2px; background:var(--red); color:white; padding:2px 6px; font-size:10px; font-weight:800; border-radius:3px; white-space:nowrap;">📱 phone GONE</div>
+          </div>
+
+          <div class="live-top">
+            <div class="live-back-btn">‹</div>
+            <div class="live-cam-title">
+              <div class="n">AI Engine — Bedroom</div>
+              <div class="s"><span class="dot red"></span> ALERT · Theft</div>
+            </div>
+            <div class="live-quality">7 FPS</div>
+          </div>
+
+          <div class="live-rec"><span class="d"></span>REC 0:08</div>
+
+          <div class="live-bottom" style="border:1px solid rgba(255,56,80,0.4); background:rgba(40,5,15,0.85);">
+            <div style="margin-bottom:12px;">
+              <div style="font-size:11px; color:var(--red); font-weight:800; letter-spacing:1px;">⚠️ POSSIBLE THEFT DETECTED</div>
+              <div style="font-size:12px; color:white; margin-top:4px; font-weight:600;">Person #2 (unknown) reached for cell phone — phone disappeared from baseline.</div>
+            </div>
+            <div class="live-stats" style="border-color:rgba(255,56,80,0.2); padding-bottom:10px; margin-bottom:10px;">
+              <div class="live-stat"><div class="v" style="color:var(--green)">2</div><div class="l">PEOPLE</div></div>
+              <div class="live-stat"><div class="v" style="color:var(--amber)">REACH</div><div class="l">ACTION</div></div>
+              <div class="live-stat"><div class="v" style="color:var(--red)">📱</div><div class="l">GRABBED</div></div>
+              <div class="live-stat"><div class="v">94%</div><div class="l">CONF</div></div>
+            </div>
+            <div class="live-actions">
+              <div class="live-act"><div class="ic">📞</div><div class="lbl">Call 911</div></div>
+              <div class="live-act"><div class="ic">🚨</div><div class="lbl">Siren</div></div>
+              <div class="live-act"><div class="ic">📷</div><div class="lbl">Save</div></div>
+              <div class="live-act danger"><div class="ic">📤</div><div class="lbl">Share</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="label-row"><div class="num">12</div><div class="label">AI Engine — Live</div></div>
+    <div class="desc">Multi-person + pose + object + theft detection · all in one frame · YOLOv8 + ByteTrack</div>
+  </div>
+
+  <!-- ============================== 13. FIRE ALARM (FULL-SCREEN) ============================== -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="screen">
+        <div class="island"></div>
+        <div class="statusbar"><span style="color:white">9:41</span><div class="sb-icons"><span>5G</span><span>📶</span><span>🔋</span></div></div>
+        <div class="fire-screen">
+          <div class="fire-vib"><span class="fire-vib-icon">📳</span> VIBRATING</div>
+          <div class="fire-banner">
+            <div class="b1">EMERGENCY ALERT</div>
+            <div class="b2">00:08 elapsed · siren active</div>
+          </div>
+
+          <div style="flex:1; display:flex; flex-direction:column; justify-content:center;">
+            <div class="fire-icon-big">🔥</div>
+            <div class="fire-title">FIRE DETECTED</div>
+            <div class="fire-cam">Bedroom Laptop</div>
+            <div class="fire-conf">Confidence: 92% · 4.2% of frame on fire</div>
+          </div>
+
+          <div class="fire-actions">
+            <div class="fire-btn-primary">VIEW LIVE CAMERA</div>
+            <div class="fire-btn-secondary">📞 CALL FIRE DEPARTMENT (911)</div>
+            <div class="fire-dismiss">Dismiss alarm (false alarm)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="label-row"><div class="num">13</div><div class="label">🔥 Fire Emergency</div></div>
+    <div class="desc">Full-screen takeover · siren bypasses mute · continuous vibration · one-tap to live feed</div>
+  </div>
+
+  <!-- ============================== 14. SMS MESSAGE ============================== -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="screen">
+        <div class="island"></div>
+        <div class="statusbar"><span>9:41</span><div class="sb-icons"><span>5G</span><span>📶</span><span>🔋</span></div></div>
+        <div class="scr-content" style="background:linear-gradient(180deg, #0a0a0a 0%, #050505 100%);">
+
+          <!-- Messages app header -->
+          <div style="display:flex; align-items:center; gap:10px; padding:8px 0 18px; border-bottom: 1px solid var(--border); margin-bottom:14px;">
+            <div style="font-size:18px; color:var(--blue);">‹</div>
+            <div style="width:36px; height:36px; border-radius:50%; background:var(--grad); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:14px;">⊙</div>
+            <div>
+              <div style="font-size:15px; font-weight:700;">SPYME Alerts</div>
+              <div style="font-size:10px; color:var(--muted);">+1 (555) SPY-FIRE</div>
+            </div>
+          </div>
+
+          <!-- Date divider -->
+          <div style="text-align:center; color:var(--muted); font-size:10px; margin-bottom:12px; font-weight:600;">
+            Today · 9:41 AM
+          </div>
+
+          <!-- Incoming SMS bubble -->
+          <div style="background:var(--card); border-radius:18px 18px 18px 4px; padding:12px 14px; max-width:85%; border:1px solid rgba(255,56,80,0.3); position:relative;">
+            <div style="position:absolute; top:-8px; left:8px; background:var(--red); color:white; font-size:9px; padding:2px 6px; border-radius:8px; font-weight:800;">CRITICAL</div>
+            <div style="font-size:13px; line-height:1.5; color:#fff; margin-top:4px;">
+              🔥 <b>FIRE ALARM</b> — SPYME detected fire at <b>09:41:02</b>.
+              <br/><br/>
+              Confidence <b>92%</b>. Bedroom Laptop camera.
+              <br/><br/>
+              Open app immediately —
+              <span style="color:var(--blue); text-decoration:underline;">spyme://event/4f8a2c9b</span>
+            </div>
+            <div style="font-size:9px; color:var(--muted); text-align:right; margin-top:6px;">9:41 AM · Delivered</div>
+          </div>
+
+          <!-- Second SMS to emergency contact -->
+          <div style="background:var(--card); border-radius:18px 18px 18px 4px; padding:12px 14px; max-width:85%; margin-top:10px; border:1px solid var(--border);">
+            <div style="font-size:11px; color:var(--muted); margin-bottom:4px; font-weight:600;">→ Forwarded to emergency contact</div>
+            <div style="font-size:12px; color:#fff; line-height:1.4;">
+              ⚠️ Fire alert sent to <b>Sarah (+1•••2103)</b> as backup contact
+            </div>
+            <div style="font-size:9px; color:var(--muted); text-align:right; margin-top:6px;">9:41 AM · Delivered</div>
+          </div>
+
+          <!-- Quick reply -->
+          <div style="margin-top:auto; padding-top:18px; display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
+            <div style="background:var(--card); padding:8px 14px; border-radius:18px; font-size:12px; color:var(--blue); border:1px solid var(--border);">I'm safe</div>
+            <div style="background:var(--card); padding:8px 14px; border-radius:18px; font-size:12px; color:var(--blue); border:1px solid var(--border);">Calling 911</div>
+            <div style="background:var(--card); padding:8px 14px; border-radius:18px; font-size:12px; color:var(--muted); border:1px solid var(--border);">False alarm</div>
+          </div>
+
+          <!-- Reply input -->
+          <div style="margin-top:14px; display:flex; gap:8px; align-items:center;">
+            <div style="flex:1; background:var(--card); border:1px solid var(--border); border-radius:18px; padding:10px 14px; font-size:12px; color:var(--muted);">iMessage</div>
+            <div style="width:36px; height:36px; background:var(--blue); border-radius:50%; display:flex; align-items:center; justify-content:center; color:white;">↑</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="label-row"><div class="num">14</div><div class="label">SMS Alert</div></div>
+    <div class="desc">Twilio SMS to your phone + emergency contact · one-tap deep link to live camera</div>
+  </div>
+
+  <!-- ============================== 15. ACCOUNT & STORAGE ============================== -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="screen">
+        <div class="island"></div>
+        <div class="statusbar"><span>9:41</span><div class="sb-icons"><span>5G</span><span>📶</span><span>🔋</span></div></div>
+        <div class="scr-content" style="background:#0a0a0a;">
+          <div style="margin-bottom:18px;">
+            <div style="font-size:11px; color:var(--muted); letter-spacing:1px; margin-bottom:6px;">SETTINGS</div>
+            <div style="font-size:24px; font-weight:800; color:white;">Account & Storage</div>
+          </div>
+
+          <!-- Linked Google account -->
+          <div style="background:var(--card); border-radius:14px; padding:14px; margin-bottom:14px;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div style="width:42px; height:42px; border-radius:50%; background:var(--grad); display:flex; align-items:center; justify-content:center; color:white; font-weight:800;">M</div>
+              <div style="flex:1;">
+                <div style="font-size:13px; color:white; font-weight:700;">Mustafa Khan</div>
+                <div style="font-size:10px; color:var(--muted);">mustafa@gmail.com</div>
+              </div>
+              <div style="background:rgba(66,133,244,0.15); padding:4px 8px; border-radius:8px; font-size:9px; color:#4285F4; font-weight:800; letter-spacing:0.5px;">G LINKED</div>
+            </div>
+          </div>
+
+          <div style="font-size:10px; color:var(--muted); letter-spacing:1px; margin-bottom:8px;">CLIP STORAGE</div>
+
+          <!-- Storage options -->
+          <div style="background:var(--card); border-radius:14px; overflow:hidden; margin-bottom:14px;">
+            <!-- Option 1 -->
+            <div style="padding:13px; display:flex; align-items:center; gap:11px; border-bottom:1px solid var(--border);">
+              <div style="font-size:20px;">☁️</div>
+              <div style="flex:1;">
+                <div style="font-size:12px; color:white; font-weight:600;">SPYME Cloud</div>
+                <div style="font-size:9px; color:var(--muted);">5 GB free · encrypted · Cloudflare R2</div>
+              </div>
+              <div style="width:18px; height:18px; border-radius:50%; border:2px solid #333;"></div>
+            </div>
+            <!-- Option 2 (selected) -->
+            <div style="padding:13px; display:flex; align-items:center; gap:11px; border-bottom:1px solid var(--border); background:rgba(66,133,244,0.05);">
+              <div style="font-size:20px;">📁</div>
+              <div style="flex:1;">
+                <div style="font-size:12px; color:white; font-weight:600;">My Google Drive <span style="color:#4285F4; font-size:9px;">CURRENT</span></div>
+                <div style="font-size:9px; color:var(--muted);">Saved to /SPYME Clips/ · 14.2 GB used · YOUR data</div>
+              </div>
+              <div style="width:18px; height:18px; border-radius:50%; border:2px solid #4285F4; background:#4285F4; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; font-weight:900;">✓</div>
+            </div>
+            <!-- Option 3 -->
+            <div style="padding:13px; display:flex; align-items:center; gap:11px;">
+              <div style="font-size:20px;">💾</div>
+              <div style="flex:1;">
+                <div style="font-size:12px; color:white; font-weight:600;">Local only</div>
+                <div style="font-size:9px; color:var(--muted);">On laptop drive · no cloud upload · max privacy</div>
+              </div>
+              <div style="width:18px; height:18px; border-radius:50%; border:2px solid #333;"></div>
+            </div>
+          </div>
+
+          <!-- Where data is -->
+          <div style="font-size:10px; color:var(--muted); letter-spacing:1px; margin-bottom:8px;">YOUR DATA</div>
+          <div style="background:var(--card); border-radius:14px; padding:14px;">
+            <div style="display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px solid var(--border);">
+              <span style="font-size:11px; color:var(--muted);">Account info</span>
+              <span style="font-size:11px; color:white; font-weight:600;">SPYME Postgres</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px solid var(--border);">
+              <span style="font-size:11px; color:var(--muted);">Event log (1,243 events)</span>
+              <span style="font-size:11px; color:white; font-weight:600;">SPYME Postgres</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px solid var(--border);">
+              <span style="font-size:11px; color:var(--muted);">Video clips (89 clips)</span>
+              <span style="font-size:11px; color:#4285F4; font-weight:700;">Your Drive ✓</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; padding:7px 0;">
+              <span style="font-size:11px; color:var(--muted);">Live stream</span>
+              <span style="font-size:11px; color:white; font-weight:600;">P2P · never stored</span>
+            </div>
+          </div>
+
+          <div style="margin-top:14px; padding:11px; background:rgba(66,133,244,0.08); border:1px solid rgba(66,133,244,0.25); border-radius:11px; display:flex; gap:8px;">
+            <div style="font-size:14px;">🔐</div>
+            <div style="font-size:10px; color:#88aaff; line-height:1.5;">
+              You're using <b>Google Drive mode</b>. Even SPYME admins can't view your clips — they live in your Drive.
+              Revoke anytime at myaccount.google.com.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="label-row"><div class="num">15</div><div class="label">Account & Storage</div></div>
+    <div class="desc">Choose where YOUR clips live · SPYME cloud · Your Google Drive · or local only</div>
+  </div>
+
+  <!-- ============================== 16. BACKEND ARCHITECTURE ============================== -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="screen">
+        <div class="island"></div>
+        <div class="statusbar"><span>9:41</span><div class="sb-icons"><span>5G</span><span>📶</span><span>🔋</span></div></div>
+        <div class="scr-content" style="background:#050505; padding:18px 16px;">
+          <div style="font-size:11px; color:var(--muted); letter-spacing:1px;">SYSTEM HEALTH</div>
+          <div style="font-size:22px; font-weight:800; color:white; margin-bottom:14px;">Backend Status</div>
+
+          <!-- Service grid -->
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:14px;">
+            <div style="background:var(--card); border-radius:11px; padding:10px;">
+              <div style="display:flex; align-items:center; gap:5px; margin-bottom:4px;"><span class="dot green"></span><span style="font-size:9px; color:var(--muted);">API</span></div>
+              <div style="font-size:13px; font-weight:700; color:white;">FastAPI</div>
+              <div style="font-size:9px; color:var(--green);">12ms p50 · 99.99%</div>
+            </div>
+            <div style="background:var(--card); border-radius:11px; padding:10px;">
+              <div style="display:flex; align-items:center; gap:5px; margin-bottom:4px;"><span class="dot green"></span><span style="font-size:9px; color:var(--muted);">DB</span></div>
+              <div style="font-size:13px; font-weight:700; color:white;">PostgreSQL</div>
+              <div style="font-size:9px; color:var(--green);">3 read replicas</div>
+            </div>
+            <div style="background:var(--card); border-radius:11px; padding:10px;">
+              <div style="display:flex; align-items:center; gap:5px; margin-bottom:4px;"><span class="dot green"></span><span style="font-size:9px; color:var(--muted);">CACHE</span></div>
+              <div style="font-size:13px; font-weight:700; color:white;">Redis</div>
+              <div style="font-size:9px; color:var(--green);">94% hit rate</div>
+            </div>
+            <div style="background:var(--card); border-radius:11px; padding:10px;">
+              <div style="display:flex; align-items:center; gap:5px; margin-bottom:4px;"><span class="dot green"></span><span style="font-size:9px; color:var(--muted);">CLIPS</span></div>
+              <div style="font-size:13px; font-weight:700; color:white;">R2 + GDrive</div>
+              <div style="font-size:9px; color:var(--green);">Hybrid storage</div>
+            </div>
+            <div style="background:var(--card); border-radius:11px; padding:10px;">
+              <div style="display:flex; align-items:center; gap:5px; margin-bottom:4px;"><span class="dot green"></span><span style="font-size:9px; color:var(--muted);">WEBRTC</span></div>
+              <div style="font-size:13px; font-weight:700; color:white;">Signaling</div>
+              <div style="font-size:9px; color:var(--green);">42 active rooms</div>
+            </div>
+            <div style="background:var(--card); border-radius:11px; padding:10px;">
+              <div style="display:flex; align-items:center; gap:5px; margin-bottom:4px;"><span class="dot green"></span><span style="font-size:9px; color:var(--muted);">TURN</span></div>
+              <div style="font-size:13px; font-weight:700; color:white;">Coturn</div>
+              <div style="font-size:9px; color:var(--green);">2.1 Mbps relay</div>
+            </div>
+          </div>
+
+          <!-- Data flow diagram -->
+          <div style="font-size:10px; color:var(--muted); letter-spacing:1px; margin-bottom:8px;">DATA FLOW</div>
+          <div style="background:var(--card); border-radius:14px; padding:14px; font-family:monospace; font-size:10px; line-height:1.7; color:var(--muted);">
+            <div><span style="color:#48bb78;">📷 Laptop</span> ─ frames ─➤ <span style="color:#fff;">YOLOv8 (local)</span></div>
+            <div style="padding-left:18px;">└─ event ─➤ <span style="color:#88aaff;">Postgres</span></div>
+            <div style="padding-left:18px;">└─ clip ──➤ <span style="color:#4285F4;">Your Drive</span> 🔒</div>
+            <div style="padding-left:18px;">└─ stream ➤ <span style="color:#FF8E53;">P2P WebRTC</span> ➤ <span style="color:#48bb78;">📱 Phone</span></div>
+            <div style="margin-top:6px;"><span style="color:#FF3850;">🔥 Fire</span> ─➤ <span style="color:#fff;">Twilio</span> ─➤ <span style="color:#48bb78;">📱 SMS</span></div>
+            <div style="padding-left:18px;">└─ <span style="color:#fff;">FCM</span> ─➤ <span style="color:#48bb78;">Push + Siren</span></div>
+          </div>
+
+          <!-- Where data lives -->
+          <div style="margin-top:12px; padding:11px; background:rgba(72,187,120,0.08); border:1px solid rgba(72,187,120,0.25); border-radius:11px;">
+            <div style="font-size:10px; color:var(--green); font-weight:700; letter-spacing:1px; margin-bottom:5px;">YOU OWN YOUR DATA</div>
+            <div style="font-size:10px; color:#aaa; line-height:1.5;">
+              Account → SPYME Postgres (EU/US region of your choice)<br/>
+              Clips → Your Drive (or SPYME R2 if you opt out)<br/>
+              Live stream → never touches our servers (P2P)<br/>
+              Audio → never recorded
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="label-row"><div class="num">16</div><div class="label">Backend Status</div></div>
+    <div class="desc">Real-time health of all services · transparent data flow · GDPR-aligned</div>
+  </div>
+
+  <!-- ============================== 17. PAYWALL / SUBSCRIPTION ============================== -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="screen">
+        <div class="island"></div>
+        <div class="statusbar"><span>9:41</span><div class="sb-icons"><span>5G</span><span>📶</span><span>🔋</span></div></div>
+        <div class="scr-content" style="background:linear-gradient(180deg, #0a0a0a 0%, #1a0510 100%); padding:18px 18px 20px;">
+
+          <!-- Trial banner -->
+          <div style="background:rgba(255,181,71,0.12); border:1px solid rgba(255,181,71,0.4); border-radius:11px; padding:9px 12px; display:flex; align-items:center; gap:8px; margin-bottom:18px;">
+            <div style="font-size:14px;">⏱</div>
+            <div style="flex:1;">
+              <div style="font-size:11px; color:var(--amber); font-weight:700;">Free trial · 1 day, 14 hours left</div>
+            </div>
+          </div>
+
+          <div style="font-size:24px; font-weight:900; color:white; line-height:1.2;">Upgrade to Pro</div>
+          <div style="font-size:12px; color:var(--muted); margin-bottom:18px;">Keep your home protected after the trial</div>
+
+          <!-- Plan cards -->
+
+          <!-- YEARLY (highlighted) -->
+          <div style="position:relative; background:linear-gradient(135deg, #1a0a14 0%, #2a0814 100%); border:2px solid var(--red); border-radius:16px; padding:14px; margin-bottom:10px;">
+            <div style="position:absolute; top:-9px; right:14px; background:var(--grad); color:white; font-size:9px; font-weight:800; padding:3px 9px; border-radius:8px; letter-spacing:0.5px;">SAVE $10 · BEST</div>
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+              <div>
+                <div style="font-size:13px; color:var(--muted); font-weight:600;">Pro Yearly</div>
+                <div style="font-size:24px; font-weight:900; color:white; margin-top:1px;">$100<span style="font-size:11px; color:var(--muted); font-weight:600;">/year</span></div>
+                <div style="font-size:9px; color:#48bb78; font-weight:600; margin-top:2px;">$8.33/mo equivalent · save $20</div>
+              </div>
+              <div style="width:22px; height:22px; border-radius:50%; background:var(--red); display:flex; align-items:center; justify-content:center; color:white; font-weight:900; font-size:13px;">✓</div>
+            </div>
+            <div style="font-size:10px; color:#aaa; line-height:1.6; margin-top:6px;">
+              ✓ Up to 4 cameras &nbsp;✓ 30-day history<br/>
+              ✓ Theft AI &nbsp;✓ 🔥 Fire alerts &nbsp;✓ SMS<br/>
+              ✓ Apple Watch &nbsp;✓ Google Drive
+            </div>
+          </div>
+
+          <!-- MONTHLY -->
+          <div style="background:var(--card); border:1px solid var(--border); border-radius:16px; padding:14px; margin-bottom:10px;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+              <div>
+                <div style="font-size:13px; color:var(--muted); font-weight:600;">Pro Monthly</div>
+                <div style="font-size:24px; font-weight:900; color:white; margin-top:1px;">$10<span style="font-size:11px; color:var(--muted); font-weight:600;">/month</span></div>
+                <div style="font-size:9px; color:var(--muted); margin-top:2px;">Cancel anytime</div>
+              </div>
+              <div style="width:22px; height:22px; border-radius:50%; border:2px solid #444;"></div>
+            </div>
+          </div>
+
+          <!-- FREE TIER -->
+          <div style="background:rgba(20,20,20,0.5); border:1px dashed var(--border); border-radius:16px; padding:13px; margin-bottom:14px;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+              <div>
+                <div style="font-size:12px; color:var(--muted); font-weight:600;">Free Tier (after trial)</div>
+                <div style="font-size:9px; color:var(--muted); margin-top:2px;">1 camera · 24h history · push only</div>
+              </div>
+              <div style="font-size:11px; color:var(--muted); font-weight:600;">$0</div>
+            </div>
+          </div>
+
+          <!-- CTA -->
+          <div style="background:var(--grad); border-radius:14px; padding:15px; text-align:center; box-shadow:0 8px 22px rgba(255,56,80,0.35); margin-bottom:8px;">
+            <div style="color:white; font-weight:800; font-size:14px;">Start Pro — $100/year</div>
+          </div>
+
+          <div style="text-align:center; font-size:10px; color:var(--muted); margin-top:6px; line-height:1.5;">
+            Renews automatically · Cancel anytime in App Store<br/>
+            <span style="text-decoration:underline;">Restore purchase</span> &nbsp;·&nbsp;
+            <span style="text-decoration:underline;">Terms</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="label-row"><div class="num">17</div><div class="label">Subscription</div></div>
+    <div class="desc">2-day free trial · $10/mo · $100/yr (save $20) · Stripe checkout</div>
+  </div>
+
+  <!-- ========================== 18. ONBOARDING (3-STEP WALKTHROUGH) ========================== -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="screen">
+        <div class="island"></div>
+        <div class="statusbar"><span>9:41</span><div class="sb-icons"><span>5G</span><span>📶</span><span>🔋</span></div></div>
+        <div class="scr-content" style="background:linear-gradient(180deg,#0a0a14 0%,#1a0810 100%);padding:24px 22px;display:flex;flex-direction:column">
+          <div style="font-size:11px;color:#666;letter-spacing:1.5px;font-weight:700">STEP 2 OF 3</div>
+          <div style="display:flex;gap:4px;margin-top:6px;margin-bottom:32px"><div style="height:3px;flex:1;background:#FF3850;border-radius:2px"></div><div style="height:3px;flex:1;background:#FF3850;border-radius:2px"></div><div style="height:3px;flex:1;background:#222;border-radius:2px"></div></div>
+
+          <div style="font-size:80px;text-align:center;margin:20px 0">💻📡📱</div>
+          <div style="font-size:30px;font-weight:900;text-align:center;letter-spacing:-1px;margin-bottom:10px;color:white">Pair your laptop</div>
+          <div style="text-align:center;font-size:13px;color:#aaa;margin-bottom:24px;line-height:1.5">Open SPYME on your laptop, hit "Add device", and enter the code below. Your phone & laptop find each other on Wi-Fi.</div>
+
+          <div style="background:#0a0a0a;border:2px dashed #444;border-radius:14px;padding:18px;text-align:center;margin-bottom:16px">
+            <div style="font-size:9px;color:#666;letter-spacing:2px;font-weight:700">PAIRING CODE · 9:51</div>
+            <div style="font-family:monospace;font-size:34px;font-weight:900;letter-spacing:6px;color:#FF3850;margin-top:4px">7K2-94X</div>
+          </div>
+
+          <div style="background:#0d0d0d;border:1px solid #1a1a1a;border-radius:11px;padding:11px;display:flex;align-items:center;gap:9px">
+            <div style="width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 6px #22c55e"></div>
+            <div style="font-size:11px;color:#888;flex:1">Listening for laptop on Wi-Fi…</div>
+          </div>
+
+          <div style="margin-top:auto;padding-top:18px">
+            <div style="background:#FF3850;border-radius:14px;padding:15px;text-align:center;color:white;font-weight:800;font-size:14px">Continue →</div>
+            <div style="text-align:center;font-size:11px;color:#666;margin-top:10px">Skip · I'll do this later</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="label-row"><div class="num">18</div><div class="label">Onboarding</div></div>
+    <div class="desc">3-step walkthrough · pairing code · auto-discovers laptop on Wi-Fi</div>
+  </div>
+
+  <!-- ========================== 19. EMPTY STATE (NO DEVICES YET) ========================== -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="screen">
+        <div class="island"></div>
+        <div class="statusbar"><span>9:41</span><div class="sb-icons"><span>5G</span><span>📶</span><span>🔋</span></div></div>
+        <div class="scr-content" style="background:#0a0a0a;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:40px 24px;text-align:center">
+          <div style="font-size:80px;margin-bottom:18px;opacity:0.6">📷</div>
+          <div style="font-size:22px;font-weight:800;margin-bottom:8px;color:white">No cameras yet</div>
+          <div style="font-size:13px;color:#888;line-height:1.6;max-width:240px;margin-bottom:24px">Add a laptop to start protecting your space. It takes about 5 minutes.</div>
+          <div style="background:linear-gradient(135deg,#FF3850,#FF8E53);border-radius:14px;padding:14px 28px;color:white;font-weight:800;font-size:13px;box-shadow:0 12px 28px rgba(255,56,80,0.35);margin-bottom:14px">+ Add my first laptop</div>
+          <div style="font-size:11px;color:#555">Don't have a laptop spare?<br/><span style="color:#FF3850;text-decoration:underline">Try with our demo feed</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="label-row"><div class="num">19</div><div class="label">Empty State</div></div>
+    <div class="desc">First-launch user has no laptops yet · friendly nudge with demo option</div>
+  </div>
+
+  <!-- ========================== 20. OFFLINE / NO INTERNET ========================== -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="screen">
+        <div class="island"></div>
+        <div class="statusbar"><span>9:41</span><div class="sb-icons"><span style="color:#FF3850">⚠</span><span>📶✕</span><span>🔋</span></div></div>
+        <div class="scr-content" style="background:#0a0a0a;padding:18px 16px">
+
+          <!-- Offline banner at top -->
+          <div style="background:rgba(255,142,83,0.12);border:1px solid rgba(255,142,83,0.4);border-radius:11px;padding:11px 14px;display:flex;align-items:center;gap:10px;margin-bottom:18px">
+            <div style="font-size:18px">📡</div>
+            <div style="flex:1">
+              <div style="font-size:11px;color:#FF8E53;font-weight:700;letter-spacing:0.3px">You're offline</div>
+              <div style="font-size:10px;color:#aaa;margin-top:1px">Showing cached data · push alerts paused</div>
+            </div>
+            <div style="font-size:10px;color:#FF8E53;font-weight:700">RETRY</div>
+          </div>
+
+          <div style="font-size:22px;font-weight:800;margin-bottom:14px;color:white">SPYME</div>
+
+          <!-- Cached cameras with greyed status -->
+          <div style="font-size:10px;color:#555;letter-spacing:1.5px;font-weight:700;margin-bottom:8px">CAMERAS · LAST KNOWN</div>
+          <div style="background:#141414;border-radius:14px;padding:14px;margin-bottom:8px;opacity:0.7">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px"><div style="width:7px;height:7px;border-radius:50%;background:#555"></div><span style="font-size:10px;color:#888">Unknown · 12 min ago</span></div>
+            <div style="font-size:13px;color:white;font-weight:700">Bedroom Laptop</div>
+            <div style="font-size:10px;color:#666;margin-top:2px">Live unavailable while offline</div>
+          </div>
+
+          <!-- Critical fire alerts queue locally -->
+          <div style="background:rgba(255,56,80,0.08);border:1px solid rgba(255,56,80,0.3);border-radius:14px;padding:12px;margin-top:14px">
+            <div style="font-size:10px;color:#FF3850;font-weight:700;letter-spacing:0.5px;margin-bottom:4px">🛡 EMERGENCY MODE STAYS ON</div>
+            <div style="font-size:11px;color:#aaa;line-height:1.5">Fire alerts will fire via SMS even if your phone is offline. The laptop sends them directly via cellular handoff.</div>
+          </div>
+
+          <div style="margin-top:auto;padding-top:18px">
+            <div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:13px;padding:13px;text-align:center;color:#aaa;font-weight:600;font-size:12px">↻ Tap to retry connection</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="label-row"><div class="num">20</div><div class="label">Offline Mode</div></div>
+    <div class="desc">Graceful degradation · cached data · fire alerts still work via SMS</div>
+  </div>
+
+  <!-- ========================== 21. PERMISSION ASK (CAMERA) ========================== -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="screen">
+        <div class="island"></div>
+        <div class="statusbar"><span>9:41</span><div class="sb-icons"><span>5G</span><span>📶</span><span>🔋</span></div></div>
+        <div class="scr-content" style="background:rgba(0,0,0,0.6);position:relative;display:flex;flex-direction:column;justify-content:flex-end;padding:0 0 30px">
+          <!-- iOS-style modal -->
+          <div style="margin:0 16px;background:#1c1c1e;border-radius:18px;padding:22px;text-align:center;box-shadow:0 -10px 40px rgba(0,0,0,0.5)">
+            <div style="font-size:42px;margin-bottom:12px">🔔</div>
+            <div style="font-size:15px;font-weight:800;color:white;margin-bottom:6px">Allow SPYME to send you Critical Alerts?</div>
+            <div style="font-size:11px;color:#aaa;line-height:1.6;margin-bottom:16px">Critical Alerts override Do Not Disturb to wake you for fire emergencies. <b style="color:white">SPYME only uses these for confirmed fire detection.</b></div>
+
+            <div style="background:rgba(255,56,80,0.12);border:1px solid rgba(255,56,80,0.3);border-radius:10px;padding:10px;margin-bottom:14px;text-align:left">
+              <div style="font-size:10px;color:#FF8E53;font-weight:700;margin-bottom:3px">🔥 You'll get</div>
+              <div style="font-size:11px;color:#ccc;line-height:1.5">Full-screen fire alarm + siren + vibration even when your phone is silenced.</div>
+            </div>
+
+            <div style="display:flex;gap:10px">
+              <div style="flex:1;background:#2c2c2e;border-radius:10px;padding:11px;font-size:13px;color:white;font-weight:600">Don't Allow</div>
+              <div style="flex:1;background:#FF3850;border-radius:10px;padding:11px;font-size:13px;color:white;font-weight:800">Allow</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="label-row"><div class="num">21</div><div class="label">Permission Ask</div></div>
+    <div class="desc">Critical Alert permission · explains WHY before iOS native prompt · primes acceptance</div>
+  </div>
+
+  <!-- ========================== 22. ARMING SUCCESS (CONFIRMATION) ========================== -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="screen">
+        <div class="island"></div>
+        <div class="statusbar"><span style="color:white">9:41</span><div class="sb-icons"><span>5G</span><span>📶</span><span>🔋</span></div></div>
+        <div class="scr-content" style="background:linear-gradient(180deg,#001a0e 0%,#003317 100%);padding:24px 20px;color:white;display:flex;flex-direction:column">
+          <div style="margin:60px auto 20px;width:120px;height:120px;border-radius:50%;background:rgba(34,197,94,0.15);border:2px solid #22c55e;display:flex;align-items:center;justify-content:center;font-size:56px;animation:successPulse 1.5s ease-out 1">✓</div>
+          <style>@keyframes successPulse{0%{transform:scale(0.5);opacity:0}50%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}</style>
+          <div style="text-align:center;font-size:30px;font-weight:900;letter-spacing:-1px">Armed</div>
+          <div style="text-align:center;font-size:13px;color:#aaffcb;margin-top:6px;line-height:1.5">Bedroom Laptop · Office Mac · Living Room PC<br/><b>3 cameras now monitoring</b></div>
+
+          <!-- What's protected -->
+          <div style="margin-top:30px;background:rgba(255,255,255,0.05);border-radius:14px;padding:14px">
+            <div style="font-size:10px;color:#aaffcb;letter-spacing:1px;font-weight:700;margin-bottom:8px">YOU'RE PROTECTED FROM</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <div style="font-size:11px;color:white">🧍 Person detection</div>
+              <div style="font-size:11px;color:white">🔥 Fire emergencies</div>
+              <div style="font-size:11px;color:white">🚨 Theft attempts</div>
+              <div style="font-size:11px;color:white">💨 Smoke detection</div>
+              <div style="font-size:11px;color:white">👥 Multiple intruders</div>
+              <div style="font-size:11px;color:white">📡 Live P2P stream</div>
+            </div>
+          </div>
+
+          <div style="margin-top:auto;padding-top:18px">
+            <div style="background:white;border-radius:14px;padding:15px;text-align:center;color:#003317;font-weight:800;font-size:14px">Watch live feed</div>
+            <div style="text-align:center;font-size:11px;color:#aaffcb;margin-top:10px;font-weight:600">Auto-disarm when I get home →</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="label-row"><div class="num">22</div><div class="label">Armed Success</div></div>
+    <div class="desc">Big satisfying confirmation · what's protected · auto-disarm geofence option</div>
+  </div>
+
+  <!-- ========================== 23. PAYMENT FAILED ========================== -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="screen">
+        <div class="island"></div>
+        <div class="statusbar"><span>9:41</span><div class="sb-icons"><span>5G</span><span>📶</span><span>🔋</span></div></div>
+        <div class="scr-content" style="background:#0a0a0a;padding:24px 22px">
+          <div style="text-align:center;margin-top:20px">
+            <div style="width:80px;height:80px;border-radius:50%;background:rgba(245,158,11,0.12);border:2px solid #f59e0b;display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 16px">!</div>
+            <div style="font-size:22px;font-weight:800;color:white;margin-bottom:6px">Payment didn't go through</div>
+            <div style="font-size:13px;color:#aaa;line-height:1.5">Your card ending •••4242 was declined.<br/>Don't worry—your protection stays on for 3 grace days.</div>
+          </div>
+
+          <!-- Grace period banner -->
+          <div style="margin-top:24px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.3);border-radius:14px;padding:14px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+              <div style="font-size:11px;color:#f59e0b;font-weight:800;letter-spacing:1px">GRACE PERIOD</div>
+              <div style="font-size:11px;color:#f59e0b;font-weight:700">2d 14h left</div>
+            </div>
+            <div style="background:#222;border-radius:4px;height:6px;overflow:hidden"><div style="height:100%;width:60%;background:linear-gradient(90deg,#f59e0b,#ff8e53);border-radius:4px"></div></div>
+            <div style="font-size:10px;color:#888;margin-top:8px;line-height:1.5">All Pro features stay active. We'll auto-retry your card and email you. After grace period, you'll switch to Free tier.</div>
+          </div>
+
+          <div style="margin-top:24px;font-size:10px;color:#666;letter-spacing:1px;font-weight:700">QUICK FIXES</div>
+          <div style="background:#141414;border-radius:14px;margin-top:8px;overflow:hidden">
+            <div style="padding:14px;display:flex;align-items:center;gap:11px;border-bottom:1px solid #1a1a1a"><div style="font-size:18px">💳</div><div style="flex:1"><div style="font-size:13px;color:white;font-weight:600">Update payment method</div><div style="font-size:10px;color:#666">Most likely fix · 30 seconds</div></div><div style="font-size:14px;color:#666">›</div></div>
+            <div style="padding:14px;display:flex;align-items:center;gap:11px;border-bottom:1px solid #1a1a1a"><div style="font-size:18px">🔁</div><div style="flex:1"><div style="font-size:13px;color:white;font-weight:600">Retry now</div><div style="font-size:10px;color:#666">Try the same card again</div></div><div style="font-size:14px;color:#666">›</div></div>
+            <div style="padding:14px;display:flex;align-items:center;gap:11px"><div style="font-size:18px">💬</div><div style="flex:1"><div style="font-size:13px;color:white;font-weight:600">Talk to us</div><div style="font-size:10px;color:#666">support@spyme.app · 1h reply</div></div><div style="font-size:14px;color:#666">›</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="label-row"><div class="num">23</div><div class="label">Payment Failed</div></div>
+    <div class="desc">3-day grace · features stay active · 3 fix options · empathetic copy</div>
+  </div>
+
+  <!-- ========================== 24. SUPPORT CHAT ========================== -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="screen">
+        <div class="island"></div>
+        <div class="statusbar"><span>9:41</span><div class="sb-icons"><span>5G</span><span>📶</span><span>🔋</span></div></div>
+        <div class="scr-content" style="background:#0a0a0a;padding:0;display:flex;flex-direction:column">
+          <!-- Header -->
+          <div style="display:flex;align-items:center;gap:11px;padding:16px;border-bottom:1px solid #1a1a1a">
+            <div style="font-size:18px;color:#FF3850">‹</div>
+            <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#a855f7,#3b82f6);display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:13px">M</div>
+            <div style="flex:1"><div style="font-size:14px;font-weight:700;color:white">Mustafa · Founder</div><div style="font-size:10px;color:#22c55e">● Online · usually replies in 1h</div></div>
+            <div style="font-size:14px">📞</div>
+          </div>
+
+          <!-- Messages -->
+          <div style="flex:1;padding:16px;overflow-y:auto">
+            <div style="text-align:center;font-size:10px;color:#555;margin-bottom:14px">Today · 3:42 PM</div>
+
+            <!-- User -->
+            <div style="display:flex;justify-content:flex-end;margin-bottom:10px"><div style="background:#FF3850;color:white;padding:9px 13px;border-radius:18px 18px 4px 18px;max-width:75%;font-size:13px">My laptop says "camera busy" — can't arm</div></div>
+
+            <!-- Founder -->
+            <div style="display:flex;gap:8px;margin-bottom:10px"><div style="width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#a855f7,#3b82f6);display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:10px;flex-shrink:0">M</div><div style="background:#1a1a1a;color:white;padding:9px 13px;border-radius:18px 18px 18px 4px;max-width:75%;font-size:13px">Hey! Usually means Zoom or Teams is holding the camera. Quit those, then hit Arm again 🙂</div></div>
+
+            <!-- AI suggestion card -->
+            <div style="background:linear-gradient(135deg,#0d0d18,#13161d);border:1px solid #1a1a1a;border-radius:14px;padding:14px;margin-bottom:10px">
+              <div style="font-size:9px;color:#a855f7;letter-spacing:1.5px;font-weight:800;margin-bottom:6px">⚡ INSTANT FIX</div>
+              <div style="font-size:13px;color:white;font-weight:600;margin-bottom:8px">Free up your laptop's camera</div>
+              <div style="background:#FF3850;border-radius:10px;padding:9px;text-align:center;color:white;font-weight:700;font-size:12px">📲 Send "force release" to laptop</div>
+            </div>
+
+            <!-- User -->
+            <div style="display:flex;justify-content:flex-end;margin-bottom:10px"><div style="background:#FF3850;color:white;padding:9px 13px;border-radius:18px 18px 4px 18px;max-width:75%;font-size:13px">It worked! Thanks 🙏</div></div>
+
+            <div style="display:flex;gap:8px"><div style="width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#a855f7,#3b82f6);display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:10px;flex-shrink:0">M</div><div style="background:#1a1a1a;color:white;padding:9px 13px;border-radius:18px 18px 18px 4px;max-width:75%;font-size:13px">🎉 ping me anytime</div></div>
+          </div>
+
+          <!-- Input -->
+          <div style="padding:12px 14px;border-top:1px solid #1a1a1a;display:flex;gap:8px;align-items:center">
+            <div style="flex:1;background:#1a1a1a;border-radius:18px;padding:10px 14px;font-size:12px;color:#666">Reply to Mustafa…</div>
+            <div style="width:36px;height:36px;border-radius:50%;background:#FF3850;display:flex;align-items:center;justify-content:center;color:white">↑</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="label-row"><div class="num">24</div><div class="label">Support Chat</div></div>
+    <div class="desc">Founder-led support · 1h reply SLA · AI auto-fix cards · sends commands to laptop</div>
+  </div>
+
+  <!-- ========================== 25. ERROR / RECOVERY ========================== -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="screen">
+        <div class="island"></div>
+        <div class="statusbar"><span>9:41</span><div class="sb-icons"><span>5G</span><span>📶</span><span>🔋</span></div></div>
+        <div class="scr-content" style="background:#0a0a0a;padding:24px 22px;display:flex;flex-direction:column">
+          <div style="text-align:center;margin:30px 0 0">
+            <div style="width:90px;height:90px;border-radius:24px;background:rgba(255,56,80,0.1);border:1px solid rgba(255,56,80,0.3);display:flex;align-items:center;justify-content:center;font-size:40px;margin:0 auto">😬</div>
+            <div style="font-size:22px;font-weight:800;color:white;margin-top:18px">Lost connection to laptop</div>
+            <div style="font-size:13px;color:#aaa;margin-top:6px;line-height:1.5">Bedroom Laptop went offline 12 minutes ago.<br/>Last known: charging, 92%, armed.</div>
+          </div>
+
+          <!-- Likely causes -->
+          <div style="margin-top:30px;background:#141414;border-radius:14px;padding:16px">
+            <div style="font-size:10px;color:#888;letter-spacing:1px;font-weight:700;margin-bottom:10px">LIKELY CAUSE</div>
+            <div style="display:flex;align-items:center;gap:11px;margin-bottom:10px"><div style="font-size:18px">😴</div><div style="flex:1"><div style="font-size:12px;color:white;font-weight:600">Laptop went to sleep</div><div style="font-size:10px;color:#666">Most common · enable "always on" in settings</div></div></div>
+            <div style="display:flex;align-items:center;gap:11px;margin-bottom:10px"><div style="font-size:18px">📡</div><div style="flex:1"><div style="font-size:12px;color:white;font-weight:600">Wi-Fi disconnected</div><div style="font-size:10px;color:#666">Router restart · network change</div></div></div>
+            <div style="display:flex;align-items:center;gap:11px"><div style="font-size:18px">🔋</div><div style="flex:1"><div style="font-size:12px;color:white;font-weight:600">Battery died</div><div style="font-size:10px;color:#666">Plug in your charger</div></div></div>
+          </div>
+
+          <!-- Auto-recovery -->
+          <div style="margin-top:14px;background:rgba(34,197,94,0.05);border:1px solid rgba(34,197,94,0.2);border-radius:14px;padding:13px;display:flex;gap:9px;align-items:center">
+            <div style="width:14px;height:14px;border-radius:50%;border:2px solid #22c55e;border-top-color:transparent;animation:spin 1s linear infinite;flex-shrink:0"></div>
+            <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+            <div style="flex:1"><div style="font-size:11px;color:#22c55e;font-weight:800">Auto-reconnecting…</div><div style="font-size:10px;color:#888">Trying every 30 seconds · attempt 3 of ∞</div></div>
+          </div>
+
+          <div style="margin-top:auto;padding-top:18px;display:flex;gap:8px">
+            <div style="flex:1;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:13px;padding:13px;text-align:center;font-size:12px;color:white;font-weight:600">Send wake-up</div>
+            <div style="flex:1;background:#FF3850;border-radius:13px;padding:13px;text-align:center;font-size:12px;color:white;font-weight:800">Get help</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="label-row"><div class="num">25</div><div class="label">Error & Recovery</div></div>
+    <div class="desc">Laptop offline · likely causes ranked · auto-reconnect loop · wake-up nudge</div>
+  </div>
+
+  <!-- ========================== 26. DEVICE LIMIT REACHED ========================== -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="screen">
+        <div class="island"></div>
+        <div class="statusbar"><span>9:41</span><div class="sb-icons"><span>5G</span><span>📶</span><span>🔋</span></div></div>
+        <div class="scr-content" style="background:#0a0a0a;padding:24px 22px;display:flex;flex-direction:column">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+            <div style="font-size:18px;color:#FF3850">‹</div>
+            <div style="font-size:12px;color:#888;font-weight:600">Add Camera</div>
+          </div>
+
+          <!-- Hero -->
+          <div style="text-align:center;margin:26px 0 22px">
+            <div style="position:relative;width:120px;height:120px;margin:0 auto 16px">
+              <svg width="120" height="120" viewBox="0 0 120 120">
+                <circle cx="60" cy="60" r="52" fill="none" stroke="#1a1a1a" stroke-width="8"/>
+                <circle cx="60" cy="60" r="52" fill="none" stroke="url(#grad26)" stroke-width="8" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="0" transform="rotate(-90 60 60)"/>
+                <defs><linearGradient id="grad26"><stop offset="0%" stop-color="#FF3850"/><stop offset="100%" stop-color="#FF8E53"/></linearGradient></defs>
+              </svg>
+              <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:white">
+                <div style="font-size:30px;font-weight:900;letter-spacing:-1px">4/4</div>
+                <div style="font-size:9px;color:#aaa;letter-spacing:1px;font-weight:700">CAMERAS</div>
+              </div>
+            </div>
+            <div style="font-size:22px;font-weight:800;color:white;margin-bottom:6px">You've hit your limit</div>
+            <div style="font-size:12px;color:#aaa;line-height:1.5">SPYME caps every account at <b style="color:white">4 laptop cameras</b> — keeps the network fast and your bill predictable.</div>
+          </div>
+
+          <!-- Current laptops -->
+          <div style="font-size:10px;color:#666;letter-spacing:1.5px;font-weight:700;margin-bottom:8px">YOUR 4 CAMERAS</div>
+          <div style="background:#0d0d0d;border-radius:13px;overflow:hidden;border:1px solid #1a1a1a">
+            <div style="padding:11px 13px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #1a1a1a"><div style="font-size:14px">💻</div><div style="flex:1;font-size:12px;color:white;font-weight:600">Bedroom Laptop <span style="color:#22c55e;font-size:9px;font-weight:700;margin-left:4px">● ARMED</span></div><div style="font-size:14px;color:#666">›</div></div>
+            <div style="padding:11px 13px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #1a1a1a"><div style="font-size:14px">💻</div><div style="flex:1;font-size:12px;color:white;font-weight:600">Office Mac <span style="color:#22c55e;font-size:9px;font-weight:700;margin-left:4px">● ARMED</span></div><div style="font-size:14px;color:#666">›</div></div>
+            <div style="padding:11px 13px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #1a1a1a"><div style="font-size:14px">💻</div><div style="flex:1;font-size:12px;color:white;font-weight:600">Living Room PC <span style="color:#888;font-size:9px;font-weight:700;margin-left:4px">○ DISARMED</span></div><div style="font-size:14px;color:#666">›</div></div>
+            <div style="padding:11px 13px;display:flex;align-items:center;gap:10px"><div style="font-size:14px">💻</div><div style="flex:1;font-size:12px;color:white;font-weight:600">Kitchen Old MBP <span style="color:#22c55e;font-size:9px;font-weight:700;margin-left:4px">● ARMED</span></div><div style="font-size:14px;color:#666">›</div></div>
+          </div>
+
+          <!-- Recommendation -->
+          <div style="margin-top:14px;background:rgba(168,85,247,0.06);border:1px solid rgba(168,85,247,0.2);border-radius:13px;padding:12px">
+            <div style="font-size:10px;color:#a855f7;font-weight:800;letter-spacing:0.5px;margin-bottom:4px">💡 NEED MORE?</div>
+            <div style="font-size:11px;color:#aaa;line-height:1.5">Remove one of the cameras above to add a new one. Your old recordings stay where you saved them.</div>
+          </div>
+
+          <div style="margin-top:auto;padding-top:18px">
+            <div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:13px;padding:13px;text-align:center;font-size:13px;color:white;font-weight:700">Manage cameras</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="label-row"><div class="num">26</div><div class="label">Limit Reached</div></div>
+    <div class="desc">4/4 ring + list of current cameras + clean swap-out path</div>
+  </div>
+
+  <!-- ========================== 27. APPLE WATCH ========================== -->
+  <div class="phone-wrap">
+    <div style="position:relative;">
+      <div class="watch-frame">
+        <div class="watch-band top"></div>
+        <div class="watch-band bot"></div>
+        <div class="watch-screen">
+          <div class="watch-time">9:41</div>
+          <div class="watch-alert" style="animation: fireFlash 0.8s infinite;">
+            <div class="watch-icon">🔥</div>
+            <div class="watch-title">FIRE ALARM</div>
+            <div class="watch-sub">Bedroom · 92%</div>
+            <div class="watch-cta">📳 Vibrating · Tap phone</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="label-row" style="margin-top:60px"><div class="num">27</div><div class="label">Apple Watch</div></div>
+    <div class="desc">Instant haptic alerts on your wrist · One-tap to open live feed on phone</div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <div class="stack">React Native · Expo · WebRTC · YOLOv8 · FastAPI · WatchOS</div>
+  <div>SPYME © 2026 · End-to-end encrypted · Privacy by design</div>
+</div>
+
+<script>
+  // generate heatmap (7 days × 24 hours, semi-random pattern)
+  const hm = document.getElementById('hm');
+  const days = ['M','T','W','T','F','S','S'];
+  function lvl(h, d) {
+    const peak = (h >= 7 && h <= 9) || (h >= 17 && h <= 22);
+    const off  = (h >= 1 && h <= 5);
+    const wknd = d >= 5;
+    if (off) return 0;
+    if (peak) return wknd ? Math.random() < 0.4 ? 4 : 3 : Math.random() < 0.5 ? 4 : 3;
+    if (h >= 10 && h <= 16) return wknd ? 2 : 1;
+    return Math.random() < 0.3 ? 1 : 0;
+  }
+  for (let d = 0; d < 7; d++) {
+    const dlbl = document.createElement('div');
+    dlbl.className = 'hm-day';
+    dlbl.textContent = days[d];
+    hm.appendChild(dlbl);
+    for (let h = 0; h < 24; h++) {
+      const cell = document.createElement('div');
+      cell.className = 'hm-cell l' + lvl(h, d);
+      hm.appendChild(cell);
+    }
+  }
+</script>
+
+</body>
+</html>

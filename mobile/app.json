@@ -1,0 +1,24 @@
+{
+  "expo": {
+    "name": "SPYME",
+    "slug": "spyme",
+    "version": "0.1.0",
+    "scheme": "spyme",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": false,
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.spyme.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "SPYME does not use the phone camera.",
+        "NSMicrophoneUsageDescription": "SPYME does not use audio."
+      }
+    },
+    "android": {
+      "package": "com.spyme.app",
+      "permissions": ["INTERNET", "POST_NOTIFICATIONS"]
+    },
+    "plugins": ["expo-router", "expo-secure-store"]
+  }
+}

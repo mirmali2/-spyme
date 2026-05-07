@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>SPYME</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0a0a0a; color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      height: 100vh; -webkit-app-region: drag; user-select: none;
+    }
+    .titlebar { height: 32px; display: flex; align-items: center; padding: 0 12px; color: #555; font-size: 11px; letter-spacing: 1px; }
+    .container { padding: 16px 20px; -webkit-app-region: no-drag; }
+    h1 { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+    .sub { color: #555; font-size: 12px; margin-bottom: 24px; }
+    .card { background: #141414; border-radius: 14px; padding: 18px; margin-bottom: 12px; }
+    .label { color: #666; font-size: 10px; letter-spacing: 0.5px; margin-bottom: 4px; text-transform: uppercase; }
+    .value { color: #fff; font-size: 14px; font-weight: 500; }
+    input { background: #1a1a1a; border: none; color: #fff; padding: 12px; border-radius: 10px; width: 100%; font-size: 13px; margin-bottom: 10px; }
+    input:focus { outline: 1px solid #e53e3e; }
+    button { background: #e53e3e; color: #fff; border: none; padding: 12px 16px; border-radius: 10px; cursor: pointer; font-size: 13px; font-weight: 600; width: 100%; }
+    button.disarm { background: #2d3748; }
+    button.secondary { background: transparent; color: #888; border: 1px solid #2d2d2d; margin-top: 6px; }
+    .status { display: flex; align-items: center; gap: 6px; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; }
+    .dot.armed { background: #e53e3e; box-shadow: 0 0 8px #e53e3e; animation: pulse 1.5s infinite; }
+    .dot.idle  { background: #4a5568; }
+    @keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: 0.4 } }
+    .hidden { display: none; }
+    .cover-toggle { font-size: 11px; color: #555; text-align: center; margin-top: 12px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div class="titlebar">SPYME</div>
+  <div class="container">
+
+    <div id="login-view">
+      <h1>Sign In</h1>
+      <div class="sub">Connect this laptop as a SPYME camera</div>
+      <input id="apiUrl" placeholder="Server URL" value="http://localhost:8000" />
+      <input id="email" placeholder="Email" />
+      <input id="password" type="password" placeholder="Password" />
+      <button onclick="doLogin()">Sign In</button>
+    </div>
+
+    <div id="register-view" class="hidden">
+      <h1>Name this Camera</h1>
+      <div class="sub">e.g. Bedroom Laptop</div>
+      <input id="deviceName" placeholder="Device name" />
+      <button onclick="doRegister()">Register Device</button>
+    </div>
+
+    <div id="main-view" class="hidden">
+      <h1 id="deviceTitle">SPYME</h1>
+      <div class="sub">Monitoring node</div>
+
+      <div class="card">
+        <div class="label">Status</div>
+        <div class="status">
+          <span id="statusDot" class="dot idle"></span>
+          <span class="value" id="statusText">Disarmed</span>
+        </div>
+      </div>
+
+      <button id="armBtn" onclick="toggleArm()">Arm Monitoring</button>
+      <div class="cover-toggle" onclick="toggleCover()">Enable Cover Mode</div>
+    </div>
+
+  </div>
+
+  <script>
+    let armed = false;
+
+    async function init() {
+      const accessToken = await window.spyme.getStore('accessToken');
+      const deviceId = await window.spyme.getStore('deviceId');
+      const deviceName = await window.spyme.getStore('deviceName');
+      const isArmed = await window.spyme.getStore('isArmed');
+
+      if (!accessToken) return showView('login-view');
+      if (!deviceId)    return showView('register-view');
+
+      document.getElementById('deviceTitle').textContent = deviceName || 'SPYME Camera';
+      armed = !!isArmed;
+      updateArmUI();
+      showView('main-view');
+    }
+
+    function showView(id) {
+      ['login-view','register-view','main-view'].forEach(v => {
+        document.getElementById(v).classList.toggle('hidden', v !== id);
+      });
+    }
+
+    async function doLogin() {
+      const apiUrl = document.getElementById('apiUrl').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      try {
+        await window.spyme.login({ apiUrl, email, password });
+        showView('register-view');
+      } catch (e) {
+        alert('Login failed: ' + e.message);
+      }
+    }
+
+    async function doRegister() {
+      const name = document.getElementById('deviceName').value.trim() || 'My Laptop';
+      try {
+        const dev = await window.spyme.registerDevice({ name });
+        document.getElementById('deviceTitle').textContent = dev.name;
+        showView('main-view');
+      } catch (e) {
+        alert('Register failed: ' + e.message);
+      }
+    }
+
+    async function toggleArm() {
+      if (armed) await window.spyme.disarm();
+      else       await window.spyme.arm();
+      armed = !armed;
+      updateArmUI();
+    }
+
+    function updateArmUI() {
+      document.getElementById('statusDot').className = 'dot ' + (armed ? 'armed' : 'idle');
+      document.getElementById('statusText').textContent = armed ? 'Monitoring active' : 'Disarmed';
+      const btn = document.getElementById('armBtn');
+      btn.textContent = armed ? 'Disarm Monitoring' : 'Arm Monitoring';
+      btn.className = armed ? 'disarm' : '';
+    }
+
+    function toggleCover() {
+      window.spyme.toggleCover();
+    }
+
+    init();
+  </script>
+</body>
+</html>
